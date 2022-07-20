@@ -12,5 +12,5 @@
 (function() {
     'use strict';
 
-    alert("Tampermonkey Jira Auto Script Active!");
+    console.log("Jira Auto is running");
 })();
