@@ -27,3 +27,15 @@
         document.body.appendChild(script_active_notification_div);
 
 })();
+
+// SKU and Name Update
+
+var name = document.getElementById('customfield_16503');
+
+name.onfocus = totalUpdate;
+
+function totalUpdate(e) {
+  const sku = document.getElementById('customfield_16000');
+  const primaryId = document.getElementById('customfield_16102');
+  primaryId.value = sku.value + e.target.value;
+}
