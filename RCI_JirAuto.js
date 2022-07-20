@@ -1,4 +1,4 @@
-// == AARP Rewards Catalog Item - Jira Auto ==
+// ==UserScript==
 // @name         Jira Auto
 // @namespace    https://jiradc.helloworld.com/
 // @version      0.1
