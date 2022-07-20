@@ -37,5 +37,6 @@ name.onfocus = totalUpdate;
 function totalUpdate(e) {
   const sku = document.getElementById('customfield_16000');
   const primaryId = document.getElementById('customfield_16102');
+  console.log(sku.value);
   primaryId.value = sku.value + e.target.value;
 }
