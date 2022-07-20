@@ -26,7 +26,7 @@
         script_active_notification_div.style.right = "0";
         document.body.appendChild(script_active_notification_div);
 
-})();
+
 
 // SKU and Name Update
 
@@ -40,3 +40,5 @@ function totalUpdate(e) {
   console.log(sku.value);
   primaryId.value = sku.value + e.target.value;
 }
+  
+})();
