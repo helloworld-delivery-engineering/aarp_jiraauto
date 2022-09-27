@@ -26,6 +26,4 @@
         script_active_notification_div.style.right = "0";
         document.body.appendChild(script_active_notification_div);
   
-  <script src="https://bitbucket.helloworld.com/snippets/c558bdf80bef4deb9aab6557294013bd.js"></script>
-  
 })();
