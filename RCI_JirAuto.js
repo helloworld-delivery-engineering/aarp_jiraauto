@@ -218,6 +218,8 @@ function changeStuff() {
         }
 
 
+
+
         //this is just for me to make the code_table name. It fills in the extra credit lesson input
 
         var codeTable = document.getElementById('customfield_16502');
@@ -403,7 +405,7 @@ function changeStuff() {
                     iwText += iw7;
                     e.preventDefault();
                 }
-                if ((sevenDayCheck == "7") || (sevenDayCheck == "-23")) {
+                if ((sevenDayCheck == "6") || (sevenDayCheck == "-22")) {
                     toDate.style.color = correct;
                     fromDate.style.color = correct;
 
@@ -490,8 +492,9 @@ function changeStuff() {
 
 
 
+
+
+
         }
     }
-
-
 }
