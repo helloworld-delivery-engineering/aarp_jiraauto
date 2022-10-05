@@ -405,7 +405,7 @@ function changeStuff() {
                     iwText += iw7;
                     e.preventDefault();
                 }
-                if ((sevenDayCheck == "6") || (sevenDayCheck == "-22")) {
+                if ((sevenDayCheck == "6") || (sevenDayCheck == "-23")) {
                     toDate.style.color = correct;
                     fromDate.style.color = correct;
 
