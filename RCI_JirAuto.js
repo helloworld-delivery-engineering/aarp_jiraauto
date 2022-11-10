@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Jira Auto
 // @namespace    https://jiradc.helloworld.com/
-// @version      1.5
+// @version      1.6
 // @description  Efficiently and accurately creating new Rewards Catalog Item Jira tickets
 // @author       Colby Lostutter and the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
