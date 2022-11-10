@@ -36,9 +36,13 @@ because some of the fields are not editable unless you are in there - This is an
 var editButton = document.getElementById('edit-issue');
 var primaryWarning = document.getElementById('rowForcustomfield_16102');
 var nameWarning = document.getElementById('rowForcustomfield_16503');
-primaryWarning.addEventListener("click", alertTest);
-nameWarning.addEventListener("click", alertTest);
+//primaryWarning.addEventListener("click", alertTest);
+//nameWarning.addEventListener("click", alertTest);
 editButton.addEventListener("click", hooooold);
+    var statusValue = document.getElementById('status-val').textContent;
+
+    console.log('Text;' + statusValue);
+
 
 
 function alertTest() {
@@ -63,10 +67,12 @@ function changeStuff() {
     var Name = document.getElementById('customfield_16503');
     var SKU = document.getElementById('customfield_16000');
     var StartDate = document.getElementById('customfield_17202');
+    let GameUUID = document.getElementById('customfield_16500');
 
     Name.onchange = totalUpdate;
     SKU.onchange = totalUpdate;
     StartDate.onchange = totalUpdate;
+    GameUUID.onchange = totalUpdate;
 
     function totalUpdate(e) {
         var PointsField = document.getElementById('customfield_16515');
@@ -177,8 +183,6 @@ function changeStuff() {
             DirectURL.value = 'https://www.aarp.org/rewards/redeem/' + NewURL + '/';
         }
 
-        //GoodsId.value = "TBD";
-
         ItemValue.value = ItemValueValue;
 
         let GameUUID = document.getElementById('customfield_16500');
@@ -205,14 +209,9 @@ function changeStuff() {
         //Points section
 
         if (isIW) {
-            PointsFieldValue == "50";
-            alert(PointsFieldValue);
+            //  PointsFieldValue == "50";
+            //   alert(PointsFieldValue);
         }
-
-
-
-
-
 
 
         //REWARD DEPLOY CREATOR
@@ -266,17 +265,9 @@ function changeStuff() {
             OamoeURL.value = "";
         }
 
-        /*
-        if (GameUUID.value < "5") {
-            GameUUID.value = 'TBD';
-        }
-        */
-
-
-
 
         //this is just for me to make the code_table name. It fills in the extra credit lesson input
-
+/*
         var codeTable = document.getElementById('customfield_16502');
         var shortNameConversion = ShortName
         .replace(/(\s|\.|[®]|[™]|[’]|[']|[-])/g, '_')
@@ -290,8 +281,7 @@ function changeStuff() {
         .replace(/__/g, '_');
 
         codeTable.value = (shortNameConversion + SKU.value.replace(/([-])/g, '_'));
-
-
+*/
     }
 
     //RETAIL VALUE AUTO UPDATER
@@ -341,18 +331,12 @@ function changeStuff() {
     }
 
 
-
-
     //ERROR HANDLING ON UPDATE BUTTON
 
     let updateButton = document.getElementById('edit-issue-submit');
     updateButton.onclick = checkForErrors;
 
     function checkForErrors(e) {
-        var statusValue = document.getElementById('status-val').textContent;
-
-
-
 
         const rewardType = document.getElementById('customfield_15702');
         var rewardTypeValue = rewardType.options[rewardType.selectedIndex].value;
@@ -503,7 +487,7 @@ function changeStuff() {
             else {
                 endDate.style.color = correct;
             }
-            if (GameUUID.value != "TBD") {
+            if (GameUUID.value.length < 3) {
                 GameUUID.style.color = incorrect;
                 iwText += iw10;
                 e.preventDefault();
@@ -519,7 +503,7 @@ function changeStuff() {
             else {
                 DisplayedSavings.style.color = correct;
             }
-            if (GoodsId.value != "TBD") {
+            if (GoodsId.value < 2) {
                 GoodsId.style.color = incorrect;
                 iwText += iw12;
                 e.preventDefault();
