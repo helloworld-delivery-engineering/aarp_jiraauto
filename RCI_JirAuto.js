@@ -624,7 +624,6 @@ function changeStuff() {
                 e.preventDefault();
             }
 
-            alert(sevenDayCheck);
             if ((sevenDayCheck == "6") || (sevenDayCheck == "-23")) {
                 toDate.style.borderColor = correct;
                 fromDate.style.borderColor = correct;
