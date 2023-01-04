@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Jira Auto
 // @namespace    https://jiradc.helloworld.com/
-// @version      1.8.2
+// @version      1.9
 // @description  Efficiently and accurately creating new Rewards Catalog Item Jira tickets
 // @author       Colby Lostutter and the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -10,9 +10,12 @@
 // ==/UserScript==
 
 
-// update 1.7 date  11-28 - corrections
-//update 1.8 Date 12-21 - Sweepstakes verification
-// update 1.8 Date 01-03 - Continuation of sweepstakes
+// update 1.8.2 date  11-28 - corrections
+//update 1.8.3 Date 12-21 - Sweepstakes verification
+// update 1.8.4 Date 01-03 - Continuation of sweepstakes
+// update 1.8.5 - 01-03-23 Date Checker corrected to acoomodate for different amount of days.
+// Disclosure text updated to capture end of month date
+// Update 1.9 IW Finished and Errors in place.
 
 window.addEventListener('load', function() {
     'use strict';
@@ -68,7 +71,7 @@ function changeStuff() {
 
     console.log('totalUpdate about to happen');
 
-    confirm("Jira Auto is loaded and ready to work");
+    alert("Jira Auto is loaded and ready to work");
 
     var Name = document.getElementById('customfield_16503');
     var SKU = document.getElementById('customfield_16000');
@@ -104,13 +107,22 @@ function changeStuff() {
         var RewardsDeploy = document.getElementById('customfield_17001');
         var rewardClient = document.getElementById('customfield_17300');
         var rewardClientValue = rewardClient.options[rewardClient.selectedIndex].value;
-        const StartDate = document.getElementById('customfield_17202');
-        let StartDateValue = StartDate.value;
-        const StartDateDay = StartDateValue.match(/\d{2}(?=\/)|\d{1}(?=\/)/g);
-        const StartDateMonth = StartDate.value.replace(/(\s|[^a-zA-Z])/g, "");
-        let StartDateYear = StartDate.value.match(/\d+$/);
+        //FROM DATE
+        const fromDate = document.getElementById('customfield_17202');
+        let fromDateValue = fromDate.value;
+        const fromDateDay = fromDateValue.match(/\d{2}(?=\/)|\d{1}(?=\/)/g);
+        const fromDateMonth = fromDate.value.replace(/(\s|[^a-zA-Z])/g, "");
+        let fromDateYear = fromDate.value.match(/\d+$/);
+        //TO DATE
+        const toDate = document.getElementById('customfield_17203');
+        let toDateValue = toDate.value;
+        const toDateDay = toDateValue.match(/\d{2}(?=\/)|\d{1}(?=\/)/g);
+        const toDateMonth = toDate.value.replace(/(\s|[^a-zA-Z])/g, "");
+        let toDateYear = toDate.value.match(/\d+$/);
         const summary = document.getElementById('summary');
         const nameForSummary = Name.value
+        .replace(/[$]/gi, "")
+        .replace(/[0-9]/g, "")
         .replace(/[’]/g, "'")
         .replace(/[']/g, "")
         .replace(/ Instant Win Play/gi, '')
@@ -163,6 +175,8 @@ function changeStuff() {
         .replace(/Sweepstakes/gi, 'Sweeps')
         .replace(/GiftCardSweeps/gi, 'Sweeps')
         .replace(/DigitalReward/gi, '');
+
+        //SKU CHECKER
         let skuChecker = SKUValue.substring(0, 2);
 
         if ((skuChecker >= 40 && skuChecker <= 49)) {
@@ -172,17 +186,16 @@ function changeStuff() {
             var isIW = 1;
         }
 
+
+        // AEM TITLES
         if (isIW) {
             AEMTileTitle.value = ShortName + "*";
             AEMTitle.value = ShortName + "*";
-            DisplayedSavings.value = "0";
-            var IWClient = rewardClient.selectedIndex = 1;
         }
+
         else if (isSweeps) {
             AEMTileTitle.value = Name.value + "*";
             AEMTitle.value = Name.value + "*";
-            DisplayedSavings.value = "0";
-            var sweepClient = rewardClient.selectedIndex = 1;
         }
         else {
             AEMTileTitle.value = ShortName;
@@ -196,6 +209,24 @@ function changeStuff() {
         const rewardType = document.getElementById('customfield_15702');
         var rewardTypeValue = rewardType.options[rewardType.selectedIndex].value;
         var rewardTypeSelected = rewardType.options[rewardType.selectedIndex].text;
+        var availability = document.getElementById('customfield_16002');
+        let ParticipantCost = document.getElementById('customfield_16512');
+        var goodsType = document.getElementById('customfield_17204');
+        var lowWatermark = document.getElementById('customfield_17206');
+        var supplier = document.getElementById('customfield_17301');
+        var fulfillment = document.getElementById('customfield_17002-1');
+        var codeFormatURL = document.getElementById('customfield_17007');
+        var filterTags = document.getElementById('customfield_16401');
+        var digitalCodeSiteURL = document.getElementById('customfield_17802');
+
+        //var filterTagIW = filterTags.value = '16903';
+        //SET IW Filter Values
+        /*   for (var i = 0; i < filterTags.options.length; i++) {
+            filterTags.options[i].selected = IWfilterTagsValue.indexOf(filterTags.options[i].value) >= 0;
+        }
+        var selectedIWFilters = Array.from(filterTags.selectedOptions)
+        .map(option => option.value);
+        */
 
         PrimaryId.value = PrimaryIDValue;
         if (rewardTypeSelected == 'Daily Instant Win') {
@@ -218,7 +249,7 @@ function changeStuff() {
 
 
         if (isIW || isSweeps) {
-            PrizePoolName.value = (SKUValue + " " + nameForSummary + " " + StartDateMonth + " 20" + StartDateYear);
+            PrizePoolName.value = (SKUValue + " " + nameForSummary + " " + fromDateMonth + " 20" + fromDateYear);
         }
         else {
             PrizePoolName.value = '';
@@ -226,25 +257,13 @@ function changeStuff() {
 
 
 
-        // REWARDS TYPE SELECTOR
 
-        if (isSweeps) {
-            var sweepsReward = rewardType.selectedIndex = 10;
-        }
-        else if (isIW) {
-            var iwReward = rewardType.selectedIndex = 3;
-        }
 
-        //Points section
 
-        if (isIW) {
-            //  PointsFieldValue == "50";
-            //   alert(PointsFieldValue);
-        }
 
 
         //REWARDS DEPLOY PATH CREATOR
-        var SN = StartDateMonth;
+        var SN = fromDateMonth;
         var Q = "";
         var sQ = "";
 
@@ -262,7 +281,7 @@ function changeStuff() {
         }
 
         if (isIW) {
-            RewardsDeploy.value = ("aarp/" + StartDateYear + Q + "instantwin");
+            RewardsDeploy.value = ("aarp/" + fromDateYear + Q + "instantwin");
         }
         else if (isSweeps) {
             if ((Q == "q1" || Q == "q2")) {
@@ -272,11 +291,12 @@ function changeStuff() {
                 sQ = 'q3q4'
             }
 
-            RewardsDeploy.value = ("aarp/" + StartDateYear + sQ + "sweepstakes");
+            RewardsDeploy.value = ("aarp/" + fromDateYear + sQ + "sweepstakes");
         }
         else {
             RewardsDeploy.value = "";
         }
+
 
         //This sets the OAMOE URL
         var RewardsDeployValue = RewardsDeploy.value;
@@ -291,8 +311,106 @@ function changeStuff() {
         }
 
 
+        //DISCLOSURE UPDATE
+
+        var disclosureCopy = document.getElementById('customfield_16508');
+        var actualMonth = '';
+
+        if (fromDateMonth === "Jan") {
+            actualMonth += "January";
+        }
+        if (fromDateMonth === "Feb") {
+            actualMonth += "February";
+        }
+        if (fromDateMonth === "Mar") {
+            actualMonth += "March";
+        }
+        if (fromDateMonth === "Apr") {
+            actualMonth += "April";
+        }
+        if (fromDateMonth === "May") {
+            actualMonth += "May";
+        }
+        if (fromDateMonth === "Jun") {
+            actualMonth += "June";
+        }
+        if (fromDateMonth === "Jul") {
+            actualMonth += "July";
+        }
+        if (fromDateMonth === "Aug") {
+            actualMonth += "August";
+        }
+        if (fromDateMonth === "Sep") {
+            actualMonth += "September";
+        }
+        if (fromDateMonth === "Oct") {
+            actualMonth += "October";
+        }
+        if (fromDateMonth === "Nov") {
+            actualMonth += "November";
+        }
+        if (fromDateMonth === "Dec") {
+            actualMonth += "December";
+        }
+
+        //Disclosure Date Setter
+        var thisMonth = fromDateMonth;
+        var lastDayOfMonth = "";
+
+        if (thisMonth == "Feb") {
+            lastDayOfMonth = "28";
+        }
+        else if (thisMonth == "Apr" | thisMonth == "Jun" | thisMonth == "Sep" | thisMonth == "Nov") {
+            lastDayOfMonth = "30";
+        }
+        else {
+            lastDayOfMonth = "31"
+        }
+
+        var readableDate = (actualMonth + ' ' + lastDayOfMonth +', 20'+fromDateYear)
+
+
+
+        // IW - SWEEPS ABSOLUTES
+        // REWARDS TYPE SELECTOR
+        // DISPLAYED SAVINGS
+        // IW CLIENT
+        // Availability
+        // PARTICIPANT COST
+        // Low Watermark
+        // GOODS TYPE
+        // FULFILLMENT
+        // FILTER on HOLD
+        // codeformat is URL
+
+        if (isSweeps) {
+            rewardType.selectedIndex = 10;
+            DisplayedSavings.value = "0";
+            rewardClient.selectedIndex = 1;
+            ParticipantCost.value = "";
+            lowWatermark.value = "0";
+            disclosureCopy.value = "<p>*No Points Necessary. See *Official Rules for alternate method of entry, odds and all details. Void where prohibited. Must enter by " + readableDate + " at 11:59 p.m. ET. Limit 10 entries per day per person. Open only to AARP Rewards participants who reside in the 50 U.S. (D.C.). Void in PR, Guam and the USVI. </p>";
+        }
+        if (isIW) {
+            rewardType.selectedIndex = 3;
+            DisplayedSavings.value = "0";
+            rewardClient.selectedIndex = 1;
+            availability.selectedIndex = 1;
+            ParticipantCost.value = "";
+            lowWatermark.value = "0";
+            goodsType.selectedIndex = 3;
+            supplier.selectedIndex = 1;
+            fulfillment.checked = true;
+            codeFormatURL.selectedIndex = 1;
+            digitalCodeSiteURL.value = "";
+
+            //filterTags.value = ["16903", "16900"]
+            //console.log(filterTags.value);
+        }
+
+
         //this is just for me to make the code_table name. It fills in the extra credit lesson input
-/*
+        /*
         var codeTable = document.getElementById('customfield_16502');
         var shortNameConversion = ShortName
         .replace(/(\s|\.|[®]|[™]|[’]|[']|[-])/g, '_')
@@ -306,59 +424,7 @@ function changeStuff() {
         .replace(/__/g, '_');
 
         codeTable.value = (shortNameConversion + SKU.value.replace(/([-])/g, '_'));
-
-*/
-        //can I set this up ONLY on date change ?
-
-        //DISCLOSURE UPDATE
-
-        var disclosureCopy = document.getElementById('customfield_16508');
-
-        var actualMonth = '';
-
-        if (StartDateMonth === "Jan") {
-            actualMonth += "January";
-        }
-        if (StartDateMonth === "Feb") {
-            actualMonth += "February";
-        }
-        if (StartDateMonth === "Mar") {
-            actualMonth += "March";
-        }
-        if (StartDateMonth === "Apr") {
-            actualMonth += "April";
-        }
-        if (StartDateMonth === "May") {
-            actualMonth += "May";
-        }
-        if (StartDateMonth === "Jun") {
-            actualMonth += "June";
-        }
-        if (StartDateMonth === "Jul") {
-            actualMonth += "July";
-        }
-        if (StartDateMonth === "Aug") {
-            actualMonth += "August";
-        }
-        if (StartDateMonth === "Sep") {
-            actualMonth += "September";
-        }
-        if (StartDateMonth === "Oct") {
-            actualMonth += "October";
-        }
-        if (StartDateMonth === "Nov") {
-            actualMonth += "November";
-        }
-        if (StartDateMonth === "Dec") {
-            actualMonth += "December";
-        }
-
-        var readableDate = (actualMonth + ' ' + StartDateDay +', 20'+StartDateYear)
-
-        if (isSweeps) {
-            disclosureCopy.value = "<p>*No Points Necessary. See *Official Rules for alternate method of entry, odds and all details. Void where prohibited. Must enter by " + readableDate + " at 11:59 p.m. ET. Limit 10 entries per day per person. Open only to AARP Rewards participants who reside in the 50 U.S. (D.C.). Void in PR, Guam and the USVI. </p>";
-        }
-
+        */
     }
 
     //END OF TOTAL UPDATE
@@ -414,12 +480,7 @@ function changeStuff() {
         DisplayedDiscount.value = DiscountPercent;
 
 
-        //IW Specific
-        if ((skuChecker === "3") || (skuChecker === "4")) {
-            let DisplayedSavingsNum = "0";
-            DisplayedSavings.value = DisplayedSavingsNum;
-            DisplayedDiscount.value = "";
-        }
+
 
     }
 
@@ -454,6 +515,7 @@ function changeStuff() {
         var fromDate = document.getElementById('customfield_17202');
         var fromDateValue = fromDate.value;
         var fromDateNum = fromDateValue.substring(0, fromDateValue.indexOf("/"));
+        var fromDateMonth = fromDate.value.replace(/(\s|[^a-zA-Z])/g, "");
         var fulfillment = document.getElementById('customfield_17002-1');
         var fulfillmentValue = fulfillment.value;
         var GameUUID = document.getElementById('customfield_16500');
@@ -487,6 +549,22 @@ function changeStuff() {
         else (supplierValue == '18203') {
             vendorCertificate.value = 'Blackhawk';
         }*/
+
+
+        //DATE CHECKER
+
+        var thisMonth = fromDateMonth;
+        var lastDayOfMonth = "";
+
+        if (thisMonth == "Feb") {
+            lastDayOfMonth = "28";
+        }
+        else if (thisMonth == "Apr" | thisMonth == "Jun" | thisMonth == "Sep" | thisMonth == "Nov") {
+            lastDayOfMonth = "30";
+        }
+        else {
+            lastDayOfMonth = "31"
+        }
 
 
         //CODE FORMAT CHECKER
@@ -555,12 +633,12 @@ function changeStuff() {
             var iw5 = "- Availability Needs to Be ALL\n";
             var iw6 = "- Supplier Needs to be AARP\n";
             var iw7 = "- Fulfillment needs to be Electronically Fulfilled\n";
-            var iw8 = "- To / From Date not one week apart\n";
+            var iw8 = "- To / From Date not 6 days apart\n";
             var iw9 = "- Start and End Dates must be blank\n";
             var iw10 = "- Game UUID should be TBD currently\n";
             var iw11 = "- Savings should always be 0\n";
             var iw12 = "- Goods ID should be TBD currently\n";
-            var iw13 = "- Points should always be 50\n";
+            var iw13 = "- Points should have a value in it\n";
             var iw14 = "- Code Format should always be Yes\n";
 
             var iwText = "";
@@ -624,16 +702,49 @@ function changeStuff() {
                 e.preventDefault();
             }
 
-            if ((sevenDayCheck == "6") || (sevenDayCheck == "-23")) {
-                toDate.style.borderColor = correct;
-                fromDate.style.borderColor = correct;
+            // USING DATE CHECKER
+            console.log(lastDayOfMonth);
+            console.log(sevenDayCheck);
+            if (lastDayOfMonth === "28") {
+                if ((sevenDayCheck == "6") || (sevenDayCheck == "-22")) {
+                    toDate.style.borderColor = correct;
+                    fromDate.style.borderColor = correct;
+                }
+                else {
+                    toDate.style.borderColor = incorrect;
+                    fromDate.style.borderColor = incorrect;
+                    iwText += iw8;
+                    e.preventDefault();
+                }
             }
-            else {
-                toDate.style.borderColor = incorrect;
-                fromDate.style.borderColor = incorrect;
-                iwText += iw8;
-                e.preventDefault();
+
+            if (lastDayOfMonth === "30") {
+                if ((sevenDayCheck == "6") || (sevenDayCheck == "-23")) {
+                    toDate.style.borderColor = correct;
+                    fromDate.style.borderColor = correct;
+                }
+                else {
+                    toDate.style.borderColor = incorrect;
+                    fromDate.style.borderColor = incorrect;
+                    iwText += iw8;
+                    e.preventDefault();
+                }
             }
+            if (lastDayOfMonth === "31") {
+                if ((sevenDayCheck == "6") || (sevenDayCheck == "-25")) {
+                    toDate.style.borderColor = correct;
+                    fromDate.style.borderColor = correct;
+                }
+                else {
+                    toDate.style.borderColor = incorrect;
+                    fromDate.style.borderColor = incorrect;
+                    iwText += iw8;
+                    e.preventDefault();
+                }
+            }
+
+
+
 
             if (endDateValue.length > 0) {
                 endDate.style.borderColor = incorrect;
@@ -675,7 +786,7 @@ function changeStuff() {
             else {
                 GoodsId.style.borderColor = correct;
             }
-            if (points.value != "50") {
+            if (points.value == "") {
                 points.style.borderColor = incorrect;
                 iwText += iw13;
                 e.preventDefault();
@@ -693,7 +804,7 @@ function changeStuff() {
             }
 
             if (iwText.length == 0) {
-                var noErrors = confirm("OUTSTANDING! There appear to be no errors")
+                var noErrors = alert("OUTSTANDING! There appear to be no errors\n\n If you want to continue to use JiraAuto, you must refresh page after clicking OK.")
                 }
             else {
                 var errorText = ("Please check the following issues if in Verification\n\n" + iwText);
@@ -709,3 +820,4 @@ function changeStuff() {
         // END IW Verification
     }
 }
+
