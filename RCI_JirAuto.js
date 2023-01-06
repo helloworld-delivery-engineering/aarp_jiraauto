@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Jira Auto
 // @namespace    https://jiradc.helloworld.com/
-// @version      1.9
+// @version      1.9.1
 // @description  Efficiently and accurately creating new Rewards Catalog Item Jira tickets
 // @author       Colby Lostutter and the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -16,6 +16,10 @@
 // update 1.8.5 - 01-03-23 Date Checker corrected to acoomodate for different amount of days.
 // Disclosure text updated to capture end of month date
 // Update 1.9 IW Finished and Errors in place.
+// Update 1.9.1 Created Extra Credit Variable
+// Updating DeployPath for Extra Credit
+// Added updates to Deploy Path with update on PrimaryID
+// Got AEM Filter Tags working
 
 window.addEventListener('load', function() {
     'use strict';
@@ -185,6 +189,9 @@ function changeStuff() {
         else if ((skuChecker >= 30 && skuChecker <= 39)) {
             var isIW = 1;
         }
+        else if ((skuChecker == 90 || skuChecker == 93)) {
+            var isEC = 1;
+        }
 
 
         // AEM TITLES
@@ -217,27 +224,31 @@ function changeStuff() {
         var fulfillment = document.getElementById('customfield_17002-1');
         var codeFormatURL = document.getElementById('customfield_17007');
         var filterTags = document.getElementById('customfield_16401');
+        var filterTagsValue = filterTags.value;
         var digitalCodeSiteURL = document.getElementById('customfield_17802');
 
-        //var filterTagIW = filterTags.value = '16903';
-        //SET IW Filter Values
-        /*   for (var i = 0; i < filterTags.options.length; i++) {
-            filterTags.options[i].selected = IWfilterTagsValue.indexOf(filterTags.options[i].value) >= 0;
-        }
-        var selectedIWFilters = Array.from(filterTags.selectedOptions)
-        .map(option => option.value);
-        */
 
-        PrimaryId.value = PrimaryIDValue;
-        if (rewardTypeSelected == 'Daily Instant Win') {
-            DirectURL.value = 'https://www.aarp.org/rewards/redeem/' + NewURL + '/';
+        //Primary ID Creator
+        if (isEC) {
+            PrimaryId.value = PrimaryIDValue + "ec"
         }
+        else {
+            PrimaryId.value = PrimaryIDValue;
+        }
+
+        //ADDS content to field if it isn't already filled because of a clone
         if (ImageURL.value.length < 61) {
             ImageURL.value = "https://cdn.aarp.net/content/dam/aarp/rewards/redeem/catalog/";
         }
+
+        //Direct URL creator
         if (isSweeps) {
             DirectURL.value = 'https://www.aarp.org/rewards/redeem/sweeps/' + NewURL + '/';
-        } else {
+        }
+        else if (isEC) {
+            DirectURL.value = 'https://www.aarp.org/rewards/redeem/' + NewURL + 'ec/';
+        }
+        else {
             DirectURL.value = 'https://www.aarp.org/rewards/redeem/' + NewURL + '/';
         }
 
@@ -254,12 +265,6 @@ function changeStuff() {
         else {
             PrizePoolName.value = '';
         }
-
-
-
-
-
-
 
 
         //REWARDS DEPLOY PATH CREATOR
@@ -370,8 +375,8 @@ function changeStuff() {
         var readableDate = (actualMonth + ' ' + lastDayOfMonth +', 20'+fromDateYear)
 
 
-
         // IW - SWEEPS ABSOLUTES
+
         // REWARDS TYPE SELECTOR
         // DISPLAYED SAVINGS
         // IW CLIENT
@@ -380,7 +385,7 @@ function changeStuff() {
         // Low Watermark
         // GOODS TYPE
         // FULFILLMENT
-        // FILTER on HOLD
+        // AEM FILTER TAGS
         // codeformat is URL
 
         if (isSweeps) {
@@ -403,14 +408,30 @@ function changeStuff() {
             fulfillment.checked = true;
             codeFormatURL.selectedIndex = 1;
             digitalCodeSiteURL.value = "";
+            document.getElementById('customfield_16401').setAttribute("multiple", "multiple");
 
-            //filterTags.value = ["16903", "16900"]
-            //console.log(filterTags.value);
+            //Clearing Filter Tags
+            for (var i = 0; i < filterTags.options.length; i++) {
+                filterTags.options[i].selected = false;
+            }
+            //Setting AEM Filter Tags
+            var filterIW = filterTags.options[10].value;
+            var filterGiftCard = filterTags.options[5].value;
+            var filterSweeps = filterTags.options[16].value;
+            var filterPoints = filterTags.options[11].value;
+
+            filterTags.options[10].setAttribute("selected", "selected");
+            filterTags.options[5].setAttribute("selected", "selected");
+            filterTags.options[16].setAttribute("selected", "selected");
+            filterTags.options[11].setAttribute("selected", "selected");
+
+            var consoleFilterTagsValue = filterTags.options[filterTags.selectedIndex].value;
+
         }
 
 
         //this is just for me to make the code_table name. It fills in the extra credit lesson input
-        /*
+ /*
         var codeTable = document.getElementById('customfield_16502');
         var shortNameConversion = ShortName
         .replace(/(\s|\.|[®]|[™]|[’]|[']|[-])/g, '_')
@@ -429,12 +450,21 @@ function changeStuff() {
 
     //END OF TOTAL UPDATE
 
+    //Primary ID Change Updates the Direct URL
+
+    var existingPrimaryId = document.getElementById('customfield_16102');
+    existingPrimaryId.onchange = updateURL;
+    function updateURL(e) {
+        var updatedDirectURL = document.getElementById('customfield_16516');
+        updatedDirectURL.value = "https://www.aarp.org/rewards/redeem/" + SKU.value + existingPrimaryId.value;
+    }
+
 
     //Code Format is URL Setter
 
     var sweepstakesPrizeType = document.getElementById('customfield_17610');
 
-    sweepstakesPrizeType.onchange = codeFormatCheck
+    sweepstakesPrizeType.onchange = codeFormatCheck;
 
     function codeFormatCheck() {
         var sweepstakesPrizeTypeValue = sweepstakesPrizeType.selectedIndex;
