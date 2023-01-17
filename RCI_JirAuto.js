@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Jira Auto
 // @namespace    https://jiradc.helloworld.com/
-// @version      1.9.1
+// @version      2.0
 // @description  Efficiently and accurately creating new Rewards Catalog Item Jira tickets
 // @author       Colby Lostutter and the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -16,10 +16,9 @@
 // update 1.8.5 - 01-03-23 Date Checker corrected to acoomodate for different amount of days.
 // Disclosure text updated to capture end of month date
 // Update 1.9 IW Finished and Errors in place.
-// Update 1.9.1 Created Extra Credit Variable
 // Updating DeployPath for Extra Credit
-// Added updates to Deploy Path with update on PrimaryID
 // Got AEM Filter Tags working
+// Sweepstakes Automation completed 01-13-23 V 2.0
 
 window.addEventListener('load', function() {
     'use strict';
@@ -227,7 +226,6 @@ function changeStuff() {
         var filterTagsValue = filterTags.value;
         var digitalCodeSiteURL = document.getElementById('customfield_17802');
 
-
         //Primary ID Creator
         if (isEC) {
             PrimaryId.value = PrimaryIDValue + "ec"
@@ -372,8 +370,7 @@ function changeStuff() {
             lastDayOfMonth = "31"
         }
 
-        var readableDate = (actualMonth + ' ' + lastDayOfMonth +', 20'+fromDateYear)
-
+        var readableDate = (actualMonth + ' ' + lastDayOfMonth +', 20'+fromDateYear);
 
         // IW - SWEEPS ABSOLUTES
 
@@ -389,14 +386,42 @@ function changeStuff() {
         // codeformat is URL
 
         if (isSweeps) {
+            var sweepsfilterTagsSelected = filterTags.options[filterTags.selectedIndex];
             rewardType.selectedIndex = 10;
             DisplayedSavings.value = "0";
             rewardClient.selectedIndex = 1;
+            supplier.selectedIndex = 1;
             ParticipantCost.value = "";
+            goodsType.selectedIndex = 4;
             lowWatermark.value = "0";
+            codeFormatURL.selectedIndex = 1;
+            document.getElementById('customfield_16401').setAttribute("multiple", "multiple");
+
+
+            //DESELECTING FILTERS
+            filterTags.options[0].selected = false;
+            filterTags.options[1].selected = false;
+            filterTags.options[2].selected = false;
+            filterTags.options[3].selected = false;
+            filterTags.options[4].selected = false;
+            filterTags.options[5].selected = false;
+            filterTags.options[6].selected = false;
+            filterTags.options[7].selected = false;
+            filterTags.options[8].selected = false;
+            filterTags.options[9].selected = false;
+            filterTags.options[10].selected = false;
+            filterTags.options[12].selected = false;
+            filterTags.options[13].selected = false;
+            filterTags.options[14].selected = false;
+            filterTags.options[15].selected = false;
+            filterTags.options[17].selected = false;
+
+            filterTags.options[16].setAttribute("selected", "selected");
+            filterTags.options[11].setAttribute("selected", "selected");
             disclosureCopy.value = "<p>*No Points Necessary. See *Official Rules for alternate method of entry, odds and all details. Void where prohibited. Must enter by " + readableDate + " at 11:59 p.m. ET. Limit 10 entries per day per person. Open only to AARP Rewards participants who reside in the 50 U.S. (D.C.). Void in PR, Guam and the USVI. </p>";
         }
         if (isIW) {
+            var iwfilterTagsSelected = filterTags.options[filterTags.selectedIndex].text;
             rewardType.selectedIndex = 3;
             DisplayedSavings.value = "0";
             rewardClient.selectedIndex = 1;
@@ -410,28 +435,30 @@ function changeStuff() {
             digitalCodeSiteURL.value = "";
             document.getElementById('customfield_16401').setAttribute("multiple", "multiple");
 
-            //Clearing Filter Tags
-            for (var i = 0; i < filterTags.options.length; i++) {
-                filterTags.options[i].selected = false;
-            }
-            //Setting AEM Filter Tags
-            var filterIW = filterTags.options[10].value;
-            var filterGiftCard = filterTags.options[5].value;
-            var filterSweeps = filterTags.options[16].value;
-            var filterPoints = filterTags.options[11].value;
+            //DESELECTING FILTERS
+            filterTags.options[0].selected = false;
+            filterTags.options[1].selected = false;
+            filterTags.options[2].selected = false;
+            filterTags.options[3].selected = false;
+            filterTags.options[4].selected = false;
+            filterTags.options[6].selected = false;
+            filterTags.options[7].selected = false;
+            filterTags.options[8].selected = false;
+            filterTags.options[9].selected = false;
+            filterTags.options[12].selected = false;
+            filterTags.options[13].selected = false;
+            filterTags.options[14].selected = false;
+            filterTags.options[15].selected = false;
+            filterTags.options[17].selected = false;
 
             filterTags.options[10].setAttribute("selected", "selected");
             filterTags.options[5].setAttribute("selected", "selected");
             filterTags.options[16].setAttribute("selected", "selected");
             filterTags.options[11].setAttribute("selected", "selected");
-
-            var consoleFilterTagsValue = filterTags.options[filterTags.selectedIndex].value;
-
         }
 
-
-        //this is just for me to make the code_table name. It fills in the extra credit lesson input
- /*
+        //this is to auto-create the code_table name. It fills in the extra credit lesson input
+        /*
         var codeTable = document.getElementById('customfield_16502');
         var shortNameConversion = ShortName
         .replace(/(\s|\.|[®]|[™]|[’]|[']|[-])/g, '_')
@@ -459,8 +486,7 @@ function changeStuff() {
         updatedDirectURL.value = "https://www.aarp.org/rewards/redeem/" + SKU.value + existingPrimaryId.value;
     }
 
-
-    //Code Format is URL Setter
+    //Code Format is URL Setter  BASED ON DIGITAL OR PHYSICAL
 
     var sweepstakesPrizeType = document.getElementById('customfield_17610');
 
@@ -477,9 +503,6 @@ function changeStuff() {
             var codeFormatNo = codeFormat.selectedIndex = 2;
             alert('Please make sure to fill out "Digital Code Site URL" field');
         }
-
-
-
     }
 
     //RETAIL VALUE AUTO UPDATER
@@ -508,13 +531,7 @@ function changeStuff() {
 
         DisplayedSavings.value = DisplayedSavingsValue;
         DisplayedDiscount.value = DiscountPercent;
-
-
-
-
     }
-
-
 
     //ERROR HANDLING ON UPDATE BUTTON
 
@@ -571,6 +588,14 @@ function changeStuff() {
         var startDateValue = startDate.value;
         var endDateValue = endDate.value;
         var globalErrorConfirm = '';
+        //FROM DATE
+        var fromDateDay = fromDateValue.match(/\d{2}(?=\/)|\d{1}(?=\/)/g);
+        let fromDateYear = fromDate.value.match(/\d+$/);
+        //TO DATE
+        var toDateDay = toDateValue.match(/\d{2}(?=\/)|\d{1}(?=\/)/g);
+        var toDateMonth = toDate.value.replace(/(\s|[^a-zA-Z])/g, "");
+        var longDescription = document.getElementById('customfield_16507');
+        var longDescriptionValue = longDescription.value;
 
         //VENDOR CHECKER
         /*if (supplierValue != '18203') {
@@ -579,7 +604,6 @@ function changeStuff() {
         else (supplierValue == '18203') {
             vendorCertificate.value = 'Blackhawk';
         }*/
-
 
         //DATE CHECKER
 
@@ -595,7 +619,6 @@ function changeStuff() {
         else {
             lastDayOfMonth = "31"
         }
-
 
         //CODE FORMAT CHECKER
         if (codeFormatText == 'No') {
@@ -643,39 +666,98 @@ function changeStuff() {
             }
         }
 
+        // ERROR TEXT
+        var er1 = "- Check reward type\n";
+        var er2 = "- Reward Client must be AARP\n";
+        var er3 = "- Low Watermark needs to be 0\n";
+        var er4 = "- To / From Date should be 1st and last day of the same month\n";
+        var er5 = "- Availability Needs to Be ALL\n";
+        var er6 = "- Supplier Needs to be AARP\n";
+        var er7 = "- Fulfillment needs to be Electronically Fulfilled\n";
+        var er8 = "- To / From Date not 6 days apart\n";
+        var er9 = "- Start and End Dates must be blank\n";
+        var er10 = "- Game UUID should be TBD currently\n";
+        var er11 = "- Savings should always be 0\n";
+        var er12 = "- Goods ID should be TBD currently\n";
+        var er13 = "- Points should have a value in it\n";
+        var er14 = "- Code Format should always be Yes\n";
+        var er15 = "- Long Description should have content\n";
 
 
+        var erText = "";
 
+
+        if (longDescriptionValue.length >= 15) {
+            longDescription.style.borderColor = correct;
+        }
+        else {
+            longDescription.style.borderColor = incorrect;
+            erText += er15;
+            e.preventDefault();
+        }
 
         //Sweeps CHECK
         if (skuChecker === '4') {
 
-        }
+            // VALID DATE CHECKER
 
+            if (lastDayOfMonth === "28") {
+                if ((fromDateDay == "1") && (toDateNum == "28")) {
+                    toDate.style.borderColor = correct;
+                    fromDate.style.borderColor = correct;
+                }
+                else {
+                    toDate.style.borderColor = incorrect;
+                    fromDate.style.borderColor = incorrect;
+                    erText += er4;
+                    e.preventDefault();
+                }
+            }
+            if (lastDayOfMonth === "30") {
+                if ((fromDateDay == "1") && (toDateNum == "30")) {
+                    toDate.style.borderColor = correct;
+                    fromDate.style.borderColor = correct;
+                }
+                else {
+                    toDate.style.borderColor = incorrect;
+                    fromDate.style.borderColor = incorrect;
+                    erText += er4;
+                    e.preventDefault();
+                }
+            }
+            if (lastDayOfMonth === "31") {
+                if ((fromDateDay == "1") && (toDateNum == "31")) {
+                    toDate.style.borderColor = correct;
+                    fromDate.style.borderColor = correct;
+                }
+                else {
+                    toDate.style.borderColor = incorrect;
+                    fromDate.style.borderColor = incorrect;
+                    erText += er4;
+                    e.preventDefault();
+                }
+            }
+
+            else {
+                toDate.style.borderColor = incorrect;
+                fromDate.style.borderColor = incorrect;
+                erText += er4;
+                e.preventDefault();
+            }
+            console.log(toDateMonth + "TO");
+            console.log(fromDateMonth + "FROM");
+            console.log(fromDateDay, lastDayOfMonth, toDateNum);
+
+
+
+        }
 
         //IW CHECK
         if (skuChecker === '3') {
 
-            var iw1 = "- Reward Type must be Daily IW\n";
-            var iw2 = "- Reward Client must be AARP\n";
-            var iw3 = "- Low Watermark needs to be 0\n";
-            var iw4 = "- Inventory needs to be 125\n";
-            var iw5 = "- Availability Needs to Be ALL\n";
-            var iw6 = "- Supplier Needs to be AARP\n";
-            var iw7 = "- Fulfillment needs to be Electronically Fulfilled\n";
-            var iw8 = "- To / From Date not 6 days apart\n";
-            var iw9 = "- Start and End Dates must be blank\n";
-            var iw10 = "- Game UUID should be TBD currently\n";
-            var iw11 = "- Savings should always be 0\n";
-            var iw12 = "- Goods ID should be TBD currently\n";
-            var iw13 = "- Points should have a value in it\n";
-            var iw14 = "- Code Format should always be Yes\n";
-
-            var iwText = "";
-
             if (rewardTypeValue != '16445') {
                 rewardType.style.borderColor = incorrect;
-                iwText += iw1;
+                erText += er1;
                 e.preventDefault();
             }
             else {
@@ -683,16 +765,15 @@ function changeStuff() {
             }
             if (rewardClientValue != '18200') {
                 rewardClient.style.borderColor = incorrect;
-                iwText += iw2;
+                erText += er2;
                 e.preventDefault();
-                console.log(rewardClientValue);
             }
             else {
                 rewardClient.style.borderColor = correct;
             }
             if (lowWatermarkValue != '0') {
                 lowWatermark.style.borderColor = incorrect;
-                iwText += iw3;
+                erText += er3;
                 e.preventDefault();
             }
             else {
@@ -700,7 +781,7 @@ function changeStuff() {
             }
             if (inventoryValue != '125') {
                 inventory.style.borderColor = incorrect;
-                iwText += iw4;
+                erText += er4;
                 e.preventDefault();
             }
             else {
@@ -709,7 +790,7 @@ function changeStuff() {
 
             if (availabilityValue != '16601') {
                 availability.style.borderColor = incorrect;
-                iwText += iw5;
+                erText += er5;
                 e.preventDefault();
             }
             else {
@@ -717,7 +798,7 @@ function changeStuff() {
             }
             if (supplierValue != '18202') {
                 supplier.style.borderColor = incorrect;
-                iwText += iw6;
+                erText += er6;
                 e.preventDefault();
             }
             else {
@@ -728,13 +809,11 @@ function changeStuff() {
             }
             else {
                 fulfillment.style.borderColor = incorrect;
-                iwText += iw7;
+                erText += er7;
                 e.preventDefault();
             }
 
             // USING DATE CHECKER
-            console.log(lastDayOfMonth);
-            console.log(sevenDayCheck);
             if (lastDayOfMonth === "28") {
                 if ((sevenDayCheck == "6") || (sevenDayCheck == "-22")) {
                     toDate.style.borderColor = correct;
@@ -743,7 +822,7 @@ function changeStuff() {
                 else {
                     toDate.style.borderColor = incorrect;
                     fromDate.style.borderColor = incorrect;
-                    iwText += iw8;
+                    erText += er8;
                     e.preventDefault();
                 }
             }
@@ -756,10 +835,11 @@ function changeStuff() {
                 else {
                     toDate.style.borderColor = incorrect;
                     fromDate.style.borderColor = incorrect;
-                    iwText += iw8;
+                    erText += er8;
                     e.preventDefault();
                 }
             }
+
             if (lastDayOfMonth === "31") {
                 if ((sevenDayCheck == "6") || (sevenDayCheck == "-25")) {
                     toDate.style.borderColor = correct;
@@ -768,17 +848,18 @@ function changeStuff() {
                 else {
                     toDate.style.borderColor = incorrect;
                     fromDate.style.borderColor = incorrect;
-                    iwText += iw8;
+                    erText += er8;
                     e.preventDefault();
                 }
             }
 
+            console.log(sevenDayCheck, er8, lastDayOfMonth);
 
 
 
             if (endDateValue.length > 0) {
                 endDate.style.borderColor = incorrect;
-                iwText += iw9;
+                erText += er9;
                 e.preventDefault();
             }
             else {
@@ -786,7 +867,7 @@ function changeStuff() {
             }
             if (startDateValue.length > 0) {
                 startDate.style.borderColor = correct;
-                iwText += iw9;
+                erText += er9;
                 e.preventDefault();
             }
             else {
@@ -794,7 +875,7 @@ function changeStuff() {
             }
             if (GameUUID.value.length < 3) {
                 GameUUID.style.borderColor = incorrect;
-                iwText += iw10;
+                erText += er10;
                 e.preventDefault();
             }
             else {
@@ -802,7 +883,7 @@ function changeStuff() {
             }
             if (DisplayedSavings.value != "0") {
                 DisplayedSavings.style.borderColor = incorrect;
-                iwText += iw11;
+                erText += er11;
                 e.preventDefault();
             }
             else {
@@ -810,7 +891,7 @@ function changeStuff() {
             }
             if (GoodsId.value < 2) {
                 GoodsId.style.borderColor = incorrect;
-                iwText += iw12;
+                erText += er12;
                 e.preventDefault();
             }
             else {
@@ -818,7 +899,7 @@ function changeStuff() {
             }
             if (points.value == "") {
                 points.style.borderColor = incorrect;
-                iwText += iw13;
+                erText += er13;
                 e.preventDefault();
             }
             else {
@@ -826,25 +907,20 @@ function changeStuff() {
             }
             if (codeFormatValue != "17413") {
                 codeFormat.style.borderColor = incorrect;
-                iwText += iw14;
+                erText += er14;
                 e.preventDefault();
             }
             else {
                 codeFormat.style.borderColor = correct;
             }
-
-            if (iwText.length == 0) {
-                var noErrors = alert("OUTSTANDING! There appear to be no errors\n\n If you want to continue to use JiraAuto, you must refresh page after clicking OK.")
-                }
-            else {
-                var errorText = ("Please check the following issues if in Verification\n\n" + iwText);
-                var rewardsTypeUpdate = confirm(errorText);
-            }
-
         }
 
+        if (erText.length == 0) {
+            var noErrors = alert("OUTSTANDING! There appear to be no errors\n\n If you want to continue to use JiraAuto, you must refresh page after clicking OK.")
+            }
         else {
-            return true;
+            var errorText = ("Please check the following issues if in Verification\n\n" + erText);
+            var rewardsTypeUpdate = confirm(errorText);
         }
 
         // END IW Verification
