@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Jira Auto
 // @namespace    https://jiradc.helloworld.com/
-// @version      2.0
+// @version      2.1
 // @description  Efficiently and accurately creating new Rewards Catalog Item Jira tickets
 // @author       Colby Lostutter and the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -19,6 +19,8 @@
 // Updating DeployPath for Extra Credit
 // Got AEM Filter Tags working
 // Sweepstakes Automation completed 01-13-23 V 2.0
+// Sweeps Auto corrections/updates and Verification V 2.1 01-17-23
+// Summary added - Opp Number added
 
 window.addEventListener('load', function() {
     'use strict';
@@ -78,12 +80,12 @@ function changeStuff() {
 
     var Name = document.getElementById('customfield_16503');
     var SKU = document.getElementById('customfield_16000');
-    var StartDate = document.getElementById('customfield_17202');
+    var fromDate = document.getElementById('customfield_17202');
     let GameUUID = document.getElementById('customfield_16500');
 
     Name.onchange = totalUpdate;
     SKU.onchange = totalUpdate;
-    StartDate.onchange = totalUpdate;
+    fromDate.onchange = totalUpdate;
     GameUUID.onchange = totalUpdate;
 
 
@@ -124,8 +126,6 @@ function changeStuff() {
         let toDateYear = toDate.value.match(/\d+$/);
         const summary = document.getElementById('summary');
         const nameForSummary = Name.value
-        .replace(/[$]/gi, "")
-        .replace(/[0-9]/g, "")
         .replace(/[’]/g, "'")
         .replace(/[']/g, "")
         .replace(/ Instant Win Play/gi, '')
@@ -208,6 +208,7 @@ function changeStuff() {
             AEMTitle.value = ShortName;
         }
 
+
         const NewTransNameLower = NewTransNameCamel.toLowerCase();
         const PrimaryIDValue = SKUValue + NewTransNameLower;
         const NewURL = SKUValue + NewTransNameLower;
@@ -225,6 +226,7 @@ function changeStuff() {
         var filterTags = document.getElementById('customfield_16401');
         var filterTagsValue = filterTags.value;
         var digitalCodeSiteURL = document.getElementById('customfield_17802');
+        var oppNumber = document.getElementById('customfield_17006');
 
         //Primary ID Creator
         if (isEC) {
@@ -285,6 +287,12 @@ function changeStuff() {
 
         if (isIW) {
             RewardsDeploy.value = ("aarp/" + fromDateYear + Q + "instantwin");
+            if (RewardsDeploy.value == "aarp/23q1instantwin") {
+                oppNumber.value = '256963';
+            }
+            if (RewardsDeploy.value == "aarp/23q2instantwin") {
+                oppNumber.value = '257464';
+            }
         }
         else if (isSweeps) {
             if ((Q == "q1" || Q == "q2")) {
@@ -293,8 +301,11 @@ function changeStuff() {
             else {
                 sQ = 'q3q4'
             }
-
             RewardsDeploy.value = ("aarp/" + fromDateYear + sQ + "sweepstakes");
+            if (RewardsDeploy.value == "aarp/23q1q2sweepstakes") {
+                oppNumber.value = '256965';
+            }
+
         }
         else {
             RewardsDeploy.value = "";
@@ -318,42 +329,55 @@ function changeStuff() {
 
         var disclosureCopy = document.getElementById('customfield_16508');
         var actualMonth = '';
+        var monthNumber = '';
 
         if (fromDateMonth === "Jan") {
             actualMonth += "January";
+            monthNumber += "1";
         }
         if (fromDateMonth === "Feb") {
             actualMonth += "February";
+            monthNumber += "1";
         }
         if (fromDateMonth === "Mar") {
             actualMonth += "March";
+            monthNumber += "3";
         }
         if (fromDateMonth === "Apr") {
             actualMonth += "April";
+            monthNumber += "4";
         }
         if (fromDateMonth === "May") {
             actualMonth += "May";
+            monthNumber += "5";
         }
         if (fromDateMonth === "Jun") {
             actualMonth += "June";
+            monthNumber += "6";
         }
         if (fromDateMonth === "Jul") {
             actualMonth += "July";
+            monthNumber += "7";
         }
         if (fromDateMonth === "Aug") {
             actualMonth += "August";
+            monthNumber += "8";
         }
         if (fromDateMonth === "Sep") {
             actualMonth += "September";
+            monthNumber += "9";
         }
         if (fromDateMonth === "Oct") {
             actualMonth += "October";
+            monthNumber += "10";
         }
         if (fromDateMonth === "Nov") {
             actualMonth += "November";
+            monthNumber += "11";
         }
         if (fromDateMonth === "Dec") {
             actualMonth += "December";
+            monthNumber += "12";
         }
 
         //Disclosure Date Setter
@@ -385,8 +409,10 @@ function changeStuff() {
         // AEM FILTER TAGS
         // codeformat is URL
 
+
         if (isSweeps) {
             var sweepsfilterTagsSelected = filterTags.options[filterTags.selectedIndex];
+            summary.value = monthNumber + "/" + fromDateDay + " | Sweeps | " + nameForSummary + ", " + SKUValue;
             rewardType.selectedIndex = 10;
             DisplayedSavings.value = "0";
             rewardClient.selectedIndex = 1;
@@ -418,10 +444,11 @@ function changeStuff() {
 
             filterTags.options[16].setAttribute("selected", "selected");
             filterTags.options[11].setAttribute("selected", "selected");
-            disclosureCopy.value = "<p>*No Points Necessary. See *Official Rules for alternate method of entry, odds and all details. Void where prohibited. Must enter by " + readableDate + " at 11:59 p.m. ET. Limit 10 entries per day per person. Open only to AARP Rewards participants who reside in the 50 U.S. (D.C.). Void in PR, Guam and the USVI. </p>";
+            disclosureCopy.value = '<p>*No Points Necessary. See <a title="Hyperlink to the Official Rules" href="https://www.aarp.org/about-aarp/rewards-terms-and-conditions/sweeps-rules/" target="_blank">*Official Rules</a> for alternate method of entry, odds and all details. Void where prohibited. Must enter by ' + readableDate + ' at 11:59 p.m. ET. Limit 10 entries per day per person. Open only to AARP Rewards participants who reside in the 50 U.S. (D.C.). Void in PR, Guam and the USVI. </p>';
         }
         if (isIW) {
             var iwfilterTagsSelected = filterTags.options[filterTags.selectedIndex].text;
+            summary.value = monthNumber + "/" + fromDateDay + " | IW | " + nameForSummary + ", " + SKUValue;
             rewardType.selectedIndex = 3;
             DisplayedSavings.value = "0";
             rewardClient.selectedIndex = 1;
@@ -455,7 +482,10 @@ function changeStuff() {
             filterTags.options[5].setAttribute("selected", "selected");
             filterTags.options[16].setAttribute("selected", "selected");
             filterTags.options[11].setAttribute("selected", "selected");
+
         }
+
+
 
         //this is to auto-create the code_table name. It fills in the extra credit lesson input
         /*
@@ -545,6 +575,15 @@ function changeStuff() {
         var rewardTypeSelected = rewardType.options[rewardType.selectedIndex].text;
         var SKUValue = SKU.value;
         const skuChecker = SKUValue.substring(0, 1);
+        if ((skuChecker >= 40 && skuChecker <= 49)) {
+            var isSweeps = 1;
+        }
+        else if ((skuChecker >= 30 && skuChecker <= 39)) {
+            var isIW = 1;
+        }
+        else if ((skuChecker == 90 || skuChecker == 93)) {
+            var isEC = 1;
+        }
 
         var correct = "#dfe1e6";
         var incorrect = "#990000";
@@ -604,6 +643,9 @@ function changeStuff() {
         else (supplierValue == '18203') {
             vendorCertificate.value = 'Blackhawk';
         }*/
+
+        startDateValue = "";
+        endDateValue = "";
 
         //DATE CHECKER
 
@@ -686,6 +728,7 @@ function changeStuff() {
 
         var erText = "";
 
+        //ALL CHECK
 
         if (longDescriptionValue.length >= 15) {
             longDescription.style.borderColor = correct;
@@ -695,9 +738,118 @@ function changeStuff() {
             erText += er15;
             e.preventDefault();
         }
+        if (endDateValue.length > 0) {
+            endDate.style.borderColor = incorrect;
+            erText += er9;
+            e.preventDefault();
+        }
+        else {
+            endDate.style.borderColor = correct;
+        }
+        if (startDateValue.length > 0) {
+            startDate.style.borderColor = correct;
+            erText += er9;
+            e.preventDefault();
+        }
+        else {
+            endDate.style.borderColor = correct;
+        }
 
-        //Sweeps CHECK
-        if (skuChecker === '4') {
+        // REWARDS TYPE SELECTOR
+        // DISPLAYED SAVINGS
+        // IW CLIENT
+        // Availability
+        // PARTICIPANT COST
+        // Low Watermark
+        // GOODS TYPE
+        // FULFILLMENT
+        // AEM FILTER TAGS
+        // codeformat is URL
+
+        //SWEEP & IW CHECK
+
+        if ((isSweeps) || (isIW)) {
+
+            if (rewardClientValue != '18200') {
+                rewardClient.style.borderColor = incorrect;
+                erText += er2;
+                e.preventDefault();
+            }
+            else {
+                rewardClient.style.borderColor = correct;
+            }
+
+            if (lowWatermarkValue != '0') {
+                lowWatermark.style.borderColor = incorrect;
+                erText += er3;
+                e.preventDefault();
+            }
+            else {
+                lowWatermark.style.borderColor = correct;
+            }
+
+            if (availabilityValue != '16601') {
+                availability.style.borderColor = incorrect;
+                erText += er5;
+                e.preventDefault();
+            }
+            else {
+                availability.style.borderColor = correct;
+            }
+            if (supplierValue != '18202') {
+                supplier.style.borderColor = incorrect;
+                erText += er6;
+                e.preventDefault();
+            }
+            else {
+                supplier.style.borderColor = correct;
+            }
+
+            if (fulfillmentValue == '17400') {
+                fulfillment.style.borderColor = correct;
+            }
+            else {
+                fulfillment.style.borderColor = incorrect;
+                erText += er7;
+                e.preventDefault();
+            }
+            if (GameUUID.value.length < 3) {
+                GameUUID.style.borderColor = incorrect;
+                erText += er10;
+                e.preventDefault();
+            }
+            else {
+                GameUUID.style.borderColor = correct;
+            }
+            if (DisplayedSavings.value != "0") {
+                DisplayedSavings.style.borderColor = incorrect;
+                erText += er11;
+                e.preventDefault();
+            }
+            else {
+                DisplayedSavings.style.borderColor = correct;
+            }
+            if (points.value == "") {
+                points.style.borderColor = incorrect;
+                erText += er13;
+                e.preventDefault();
+            }
+            else {
+                points.style.borderColor = correct;
+            }
+            if (codeFormatValue != "17413") {
+                codeFormat.style.borderColor = incorrect;
+                erText += er14;
+                e.preventDefault();
+            }
+            else {
+                codeFormat.style.borderColor = correct;
+            }
+
+        }
+
+        //Sweeps only CHECK
+        if (isSweeps) {
 
             // VALID DATE CHECKER
 
@@ -744,16 +896,23 @@ function changeStuff() {
                 erText += er4;
                 e.preventDefault();
             }
-            console.log(toDateMonth + "TO");
-            console.log(fromDateMonth + "FROM");
-            console.log(fromDateDay, lastDayOfMonth, toDateNum);
 
+            //Rewards Type
+
+            if (rewardTypeValue != '16447') {
+                rewardType.style.borderColor = incorrect;
+                erText += er1;
+                e.preventDefault();
+            }
+            else {
+                rewardType.style.borderColor = correct;
+            }
 
 
         }
 
-        //IW CHECK
-        if (skuChecker === '3') {
+        //IW only CHECK
+        if (isIW) {
 
             if (rewardTypeValue != '16445') {
                 rewardType.style.borderColor = incorrect;
@@ -763,22 +922,7 @@ function changeStuff() {
             else {
                 rewardType.style.borderColor = correct;
             }
-            if (rewardClientValue != '18200') {
-                rewardClient.style.borderColor = incorrect;
-                erText += er2;
-                e.preventDefault();
-            }
-            else {
-                rewardClient.style.borderColor = correct;
-            }
-            if (lowWatermarkValue != '0') {
-                lowWatermark.style.borderColor = incorrect;
-                erText += er3;
-                e.preventDefault();
-            }
-            else {
-                lowWatermark.style.borderColor = correct;
-            }
+
             if (inventoryValue != '125') {
                 inventory.style.borderColor = incorrect;
                 erText += er4;
@@ -788,30 +932,7 @@ function changeStuff() {
                 inventory.style.borderColor = correct;
             }
 
-            if (availabilityValue != '16601') {
-                availability.style.borderColor = incorrect;
-                erText += er5;
-                e.preventDefault();
-            }
-            else {
-                availability.style.borderColor = correct;
-            }
-            if (supplierValue != '18202') {
-                supplier.style.borderColor = incorrect;
-                erText += er6;
-                e.preventDefault();
-            }
-            else {
-                supplier.style.borderColor = correct;
-            }
-            if (fulfillmentValue == '17400') {
-                fulfillment.style.borderColor = correct;
-            }
-            else {
-                fulfillment.style.borderColor = incorrect;
-                erText += er7;
-                e.preventDefault();
-            }
+
 
             // USING DATE CHECKER
             if (lastDayOfMonth === "28") {
@@ -855,40 +976,6 @@ function changeStuff() {
 
             console.log(sevenDayCheck, er8, lastDayOfMonth);
 
-
-
-            if (endDateValue.length > 0) {
-                endDate.style.borderColor = incorrect;
-                erText += er9;
-                e.preventDefault();
-            }
-            else {
-                endDate.style.borderColor = correct;
-            }
-            if (startDateValue.length > 0) {
-                startDate.style.borderColor = correct;
-                erText += er9;
-                e.preventDefault();
-            }
-            else {
-                endDate.style.borderColor = correct;
-            }
-            if (GameUUID.value.length < 3) {
-                GameUUID.style.borderColor = incorrect;
-                erText += er10;
-                e.preventDefault();
-            }
-            else {
-                GameUUID.style.borderColor = correct;
-            }
-            if (DisplayedSavings.value != "0") {
-                DisplayedSavings.style.borderColor = incorrect;
-                erText += er11;
-                e.preventDefault();
-            }
-            else {
-                DisplayedSavings.style.borderColor = correct;
-            }
             if (GoodsId.value < 2) {
                 GoodsId.style.borderColor = incorrect;
                 erText += er12;
@@ -897,22 +984,8 @@ function changeStuff() {
             else {
                 GoodsId.style.borderColor = correct;
             }
-            if (points.value == "") {
-                points.style.borderColor = incorrect;
-                erText += er13;
-                e.preventDefault();
-            }
-            else {
-                points.style.borderColor = correct;
-            }
-            if (codeFormatValue != "17413") {
-                codeFormat.style.borderColor = incorrect;
-                erText += er14;
-                e.preventDefault();
-            }
-            else {
-                codeFormat.style.borderColor = correct;
-            }
+
+
         }
 
         if (erText.length == 0) {
@@ -925,5 +998,6 @@ function changeStuff() {
 
         // END IW Verification
     }
+
 }
 
