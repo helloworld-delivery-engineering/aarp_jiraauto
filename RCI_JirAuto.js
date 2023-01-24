@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Jira Auto
 // @namespace    https://jiradc.helloworld.com/
-// @version      2.1
+// @version      2.2
 // @description  Efficiently and accurately creating new Rewards Catalog Item Jira tickets
 // @author       Colby Lostutter and the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -21,6 +21,8 @@
 // Sweepstakes Automation completed 01-13-23 V 2.0
 // Sweeps Auto corrections/updates and Verification V 2.1 01-17-23
 // Summary added - Opp Number added
+// Clean Up and Participation cost updates 01-20-23
+// corrected mistake. V2.2
 
 window.addEventListener('load', function() {
     'use strict';
@@ -82,6 +84,8 @@ function changeStuff() {
     var SKU = document.getElementById('customfield_16000');
     var fromDate = document.getElementById('customfield_17202');
     let GameUUID = document.getElementById('customfield_16500');
+
+
 
     Name.onchange = totalUpdate;
     SKU.onchange = totalUpdate;
@@ -487,6 +491,9 @@ function changeStuff() {
 
 
 
+
+
+
         //this is to auto-create the code_table name. It fills in the extra credit lesson input
         /*
         var codeTable = document.getElementById('customfield_16502');
@@ -503,9 +510,27 @@ function changeStuff() {
 
         codeTable.value = (shortNameConversion + SKU.value.replace(/([-])/g, '_'));
         */
+
+        console.log(skuChecker + "test");
     }
 
     //END OF TOTAL UPDATE
+
+    //SKU CHECKER
+
+    let SKUValue = SKU.value;
+    let skuChecker = SKUValue.substring(0, 2);
+
+    if ((skuChecker >= 40 && skuChecker <= 49)) {
+        var isSweeps = 1;
+    }
+    else if ((skuChecker >= 30 && skuChecker <= 39)) {
+        var isIW = 1;
+    }
+
+
+    console.log(skuChecker + "test2", isIW, isSweeps);
+
 
     //Primary ID Change Updates the Direct URL
 
@@ -519,7 +544,6 @@ function changeStuff() {
     //Code Format is URL Setter  BASED ON DIGITAL OR PHYSICAL
 
     var sweepstakesPrizeType = document.getElementById('customfield_17610');
-
     sweepstakesPrizeType.onchange = codeFormatCheck;
 
     function codeFormatCheck() {
@@ -536,31 +560,74 @@ function changeStuff() {
     }
 
     //RETAIL VALUE AUTO UPDATER
+
     let RetailValue = document.getElementById('customfield_16511');
+    let RetailValueNum = RetailValue.value
+    .replace(/[$]/g, '');
     let ParticipantCost = document.getElementById('customfield_16512');
+    let ParticipantCostValue = ParticipantCost.value;
+    let DisplayedSavings = document.getElementById('customfield_16513');
+    let DisplayedSavingsNum = (RetailValueNum - ParticipantCostValue);
+    let DisplayedSavingsValue = ('$' + DisplayedSavingsNum);
+    let DisplayedDiscount = document.getElementById('customfield_16514');
+    let DisplayedDiscountValue = (DisplayedSavingsNum / RetailValueNum);
+    let DiscountPercent = Number(DisplayedDiscountValue).toLocaleString(undefined, {
+        style: 'percent'
+    });
+    let PointsField = document.getElementById('customfield_16515');
+    let PointsFieldValue = PointsField.value;
 
-    RetailValue.onchange = ValueUpdater;
-    ParticipantCost.onchange = ValueUpdater;
 
-    function ValueUpdater(e) {
-        let ItemValue = document.getElementById('customfield_16511');
-        let ItemValueNum = ItemValue.value
+
+    PointsField.addEventListener("change", pointModifier);
+    function pointModifier() {
+        let ParticipantCost = document.getElementById('customfield_16512');
+        let DisplayedSavings = document.getElementById('customfield_16513');
+        let DisplayedDiscount = document.getElementById('customfield_16514');
+        let RetailValue = document.getElementById('customfield_16511');
+        console.log('point');
+        ParticipantCost.value = '';
+        DisplayedSavings.value = "";
+        DisplayedDiscount.value = "";
+        DisplayedSavings.value = RetailValue.value;
+    }
+
+    ParticipantCost.addEventListener("change", costModifier);
+    function costModifier() {
+        let RetailValue = document.getElementById('customfield_16511');
+        let ParticipantCost = document.getElementById('customfield_16512');
+        let DisplayedSavings = document.getElementById('customfield_16513');
+        let DisplayedDiscount = document.getElementById('customfield_16514');
+        let PointsField = document.getElementById('customfield_16515');
+        let RetailValueNum = RetailValue.value
         .replace(/[$]/g, '');
         let ParticipantCostValue = ParticipantCost.value;
-        let DisplayedSavings = document.getElementById('customfield_16513');
-        let DisplayedSavingsNum = (ItemValueNum - ParticipantCostValue);
+        let DisplayedSavingsNum = (RetailValueNum - ParticipantCostValue);
         let DisplayedSavingsValue = ('$' + DisplayedSavingsNum);
-        let DisplayedDiscount = document.getElementById('customfield_16514');
-        let DisplayedDiscountValue = (DisplayedSavingsNum / ItemValueNum);
+        let DisplayedDiscountValue = (DisplayedSavingsNum / RetailValueNum);
         let DiscountPercent = Number(DisplayedDiscountValue).toLocaleString(undefined, {
             style: 'percent'
         });
-        let PointsField = document.getElementById('customfield_16515');
-        var SKUValue = SKU.value;
-        const skuChecker = SKUValue.substring(0, 1);
-
+        PointsField.value = "";
+        DisplayedSavings.value = "";
         DisplayedSavings.value = DisplayedSavingsValue;
         DisplayedDiscount.value = DiscountPercent;
+    }
+
+
+
+    //Auto LOW WATERMARK
+
+    var inventory = document.getElementById('customfield_16101');
+
+    inventory.addEventListener("change", autoLow);
+    function autoLow() {
+        var inventory = document.getElementById('customfield_16101');
+        var lowWatermark = document.getElementById('customfield_17206');
+
+        lowWatermark.value = (inventory.value / 5);
+        console.log(inventory.value);
+
     }
 
     //ERROR HANDLING ON UPDATE BUTTON
@@ -569,20 +636,21 @@ function changeStuff() {
     updateButton.onclick = checkForErrors;
 
     function checkForErrors(e) {
-
+        var SKU = document.getElementById('customfield_16000');
         const rewardType = document.getElementById('customfield_15702');
         var rewardTypeValue = rewardType.options[rewardType.selectedIndex].value;
         var rewardTypeSelected = rewardType.options[rewardType.selectedIndex].text;
         var SKUValue = SKU.value;
         const skuChecker = SKUValue.substring(0, 1);
+
         if ((skuChecker >= 40 && skuChecker <= 49)) {
-            var isSweeps = 1;
+            isSweeps = 1;
         }
         else if ((skuChecker >= 30 && skuChecker <= 39)) {
-            var isIW = 1;
+            isIW = 1;
         }
         else if ((skuChecker == 90 || skuChecker == 93)) {
-            var isEC = 1;
+            //isEC = 1;
         }
 
         var correct = "#dfe1e6";
@@ -636,6 +704,8 @@ function changeStuff() {
         var longDescription = document.getElementById('customfield_16507');
         var longDescriptionValue = longDescription.value;
 
+
+
         //VENDOR CHECKER
         /*if (supplierValue != '18203') {
             vendorCertificate.value == 0;
@@ -646,6 +716,8 @@ function changeStuff() {
 
         startDateValue = "";
         endDateValue = "";
+
+        var erText = "";
 
         //DATE CHECKER
 
@@ -688,7 +760,7 @@ function changeStuff() {
         if((rewardTypeValue == '17005') || (rewardTypeValue == '16444') || (rewardTypeValue == '17017')) {
             if(points.value.length > 0) {
                 points.style.borderColor = incorrect;
-                confirm('Purchase Item, Points should be empty or 0');
+                erText = ('Purchase Item, Points should be empty or 0');
                 e.preventDefault();
             }
             else {
@@ -697,6 +769,7 @@ function changeStuff() {
         }
 
         //REWARD TYPE POINT CHECK
+
         if((rewardTypeValue == '16443') || (rewardTypeValue == '17702') || (rewardTypeValue == '17006')) {
             if(points.value.length > 0) {
                 points.style.borderColor = incorrect;
@@ -704,6 +777,7 @@ function changeStuff() {
                 e.preventDefault();
             }
             else {
+                console.log('reward check');
                 points.style.borderColor = correct;
             }
         }
@@ -726,7 +800,7 @@ function changeStuff() {
         var er15 = "- Long Description should have content\n";
 
 
-        var erText = "";
+
 
         //ALL CHECK
 
@@ -989,7 +1063,7 @@ function changeStuff() {
         }
 
         if (erText.length == 0) {
-            var noErrors = alert("OUTSTANDING! There appear to be no errors\n\n If you want to continue to use JiraAuto, you must refresh page after clicking OK.")
+            var noErrors = confirm("OUTSTANDING! There appear to be no errors\n\n If you want to continue to use JiraAuto, you must refresh page after clicking OK.")
             }
         else {
             var errorText = ("Please check the following issues if in Verification\n\n" + erText);
