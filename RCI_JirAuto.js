@@ -433,16 +433,16 @@ function changeStuff() {
         var typeOfItem = "";
 
         if (isIW) {
-            typeOfItem = "Instant Win"
+            typeOfItem = "IW"
         }
         else if (isSweeps) {
-            typeOfItem = "Sweepstakes"
+            typeOfItem = "Sweeps"
         }
         else if (isEC) {
-            typeOfItem = "Extra Credit"
+            typeOfItem = "EC"
         }
         else if (isDD) {
-            typeOfItem = "Daily Deal"
+            typeOfItem = "DD"
         }
 
 
