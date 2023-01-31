@@ -145,8 +145,8 @@ function changeStuff() {
         const Gap = /Gap eGift Card/g;
         const EGiftSubstring = / eGift Card/gi;
         const EGiftSubstring2 = / E-Gift Card/gi;
-        const ItemValueValue = (Name.value.replace(/([a-zA-Z]|\s|\&|[®]|[™]|[’]|[']|[-])/g, ''))
-        .trim();
+        const ItemValueValue = (Name.value
+        .trim());
         const ShortName = Name.value
         .trim()
         .replace(/[$]/gi, '')
@@ -183,6 +183,18 @@ function changeStuff() {
         .replace(/GiftCardSweeps/gi, 'Sweeps')
         .replace(/DigitalReward/gi, '');
 
+        var prizePoolItemName = Name.value
+        .replace(/[0-9]/g, '')
+        .replace(/[-]|[’]|[.]|[“]|[”]|[®]|[$]|[™]/gi, '')
+        .replace(/[’]/g, "'")
+        .replace(/[']/g, "")
+        .replace(/ Instant Win Play/gi, '')
+        .replace(/ Instant Win/gi, '')
+        .replace(/Daily Deal/gi, '')
+        .replace(/Extra Credit/gi, '')
+        .replace(/Sweepstakes/gi, '')
+        .trim();
+
         //SKU CHECKER
         let skuChecker = SKUValue.substring(0, 2);
 
@@ -195,6 +207,20 @@ function changeStuff() {
         else if ((skuChecker == 90 || skuChecker == 93)) {
             var isEC = 1;
         }
+        else if ((skuChecker == 10 || skuChecker >= 12)) {
+            var isPO = 1;
+        }
+        else if ((skuChecker == 60 || skuChecker >= 69)) {
+            var isEGreeting = 1;
+        }
+        else if ((skuChecker == 11)) {
+            var isContribution = 1;
+        }
+        else if ((skuChecker == 12)) {
+            var isDD = 1;
+        }
+
+
 
 
         // AEM TITLES
@@ -231,6 +257,7 @@ function changeStuff() {
         var filterTagsValue = filterTags.value;
         var digitalCodeSiteURL = document.getElementById('customfield_17802');
         var oppNumber = document.getElementById('customfield_17006');
+        var brandName = document.getElementById('customfield_16001');
 
         //Primary ID Creator
         if (isEC) {
@@ -262,9 +289,11 @@ function changeStuff() {
 
         Name.value = NameTrim;
 
+        
+
 
         if (isIW || isSweeps) {
-            PrizePoolName.value = (SKUValue + " " + nameForSummary + " " + fromDateMonth + " 20" + fromDateYear);
+            PrizePoolName.value = (SKUValue + " " + prizePoolItemName + " " + fromDateMonth + " 20" + fromDateYear);
         }
         else {
             PrizePoolName.value = '';
@@ -400,6 +429,27 @@ function changeStuff() {
 
         var readableDate = (actualMonth + ' ' + lastDayOfMonth +', 20'+fromDateYear);
 
+        //TYPE OF ITEM
+        var typeOfItem = "";
+
+        if (isIW) {
+            typeOfItem = "Instant Win"
+        }
+        else if (isSweeps) {
+            typeOfItem = "Sweepstakes"
+        }
+        else if (isEC) {
+            typeOfItem = "Extra Credit"
+        }
+        else if (isDD) {
+            typeOfItem = "Daily Deal"
+        }
+
+
+        summary.value = monthNumber + "/" + fromDateDay + " | " + typeOfItem + " | " + nameForSummary + ", " + SKUValue;
+        ;
+        console.log(typeOfItem);
+
         // IW - SWEEPS ABSOLUTES
 
         // REWARDS TYPE SELECTOR
@@ -416,7 +466,6 @@ function changeStuff() {
 
         if (isSweeps) {
             var sweepsfilterTagsSelected = filterTags.options[filterTags.selectedIndex];
-            summary.value = monthNumber + "/" + fromDateDay + " | Sweeps | " + nameForSummary + ", " + SKUValue;
             rewardType.selectedIndex = 10;
             DisplayedSavings.value = "0";
             rewardClient.selectedIndex = 1;
@@ -452,7 +501,6 @@ function changeStuff() {
         }
         if (isIW) {
             var iwfilterTagsSelected = filterTags.options[filterTags.selectedIndex].text;
-            summary.value = monthNumber + "/" + fromDateDay + " | IW | " + nameForSummary + ", " + SKUValue;
             rewardType.selectedIndex = 3;
             DisplayedSavings.value = "0";
             rewardClient.selectedIndex = 1;
@@ -486,7 +534,7 @@ function changeStuff() {
             filterTags.options[5].setAttribute("selected", "selected");
             filterTags.options[16].setAttribute("selected", "selected");
             filterTags.options[11].setAttribute("selected", "selected");
-
+            disclosureCopy.value = '<p>*No Points Necessary. See <a title="Hyperlink to the Official Rules" href="https://www.aarp.org/about-aarp/rewards-terms-and-conditions/instant-win-rules/" target="_blank">Official Rules</a> for alternate method of entry, odds and all details. Must enter by ' + readableDate + ' at 11:59 p.m. ET. Void where prohibited. Limit 1 play each &ldquo;Day&rdquo; (defined as 12:00 a.m. ET through 11:59 p.m. ET) per person. Open only to AARP Rewards participants who reside in the 50 U.S. (D.C.). Void in PR, Guam and the USVI.</p>';
         }
 
 
@@ -495,7 +543,7 @@ function changeStuff() {
 
 
         //this is to auto-create the code_table name. It fills in the extra credit lesson input
-        /*
+/*
         var codeTable = document.getElementById('customfield_16502');
         var shortNameConversion = ShortName
         .replace(/(\s|\.|[®]|[™]|[’]|[']|[-])/g, '_')
@@ -511,7 +559,6 @@ function changeStuff() {
         codeTable.value = (shortNameConversion + SKU.value.replace(/([-])/g, '_'));
         */
 
-        console.log(skuChecker + "test");
     }
 
     //END OF TOTAL UPDATE
@@ -798,6 +845,7 @@ function changeStuff() {
         var er13 = "- Points should have a value in it\n";
         var er14 = "- Code Format should always be Yes\n";
         var er15 = "- Long Description should have content\n";
+        var er16 = "- Please check your inventory\n";
 
 
 
@@ -927,6 +975,8 @@ function changeStuff() {
 
             // VALID DATE CHECKER
 
+            console.log(lastDayOfMonth);
+
             if (lastDayOfMonth === "28") {
                 if ((fromDateDay == "1") && (toDateNum == "28")) {
                     toDate.style.borderColor = correct;
@@ -997,18 +1047,22 @@ function changeStuff() {
                 rewardType.style.borderColor = correct;
             }
 
-            if (inventoryValue != '125') {
+            /*if ((inventoryValue != '125') || (inventoryValue != '450')) {
                 inventory.style.borderColor = incorrect;
-                erText += er4;
+                erText += er16;
                 e.preventDefault();
             }
             else {
                 inventory.style.borderColor = correct;
-            }
+            }*/
 
 
 
             // USING DATE CHECKER
+
+
+            console.log(sevenDayCheck, er8, lastDayOfMonth);
+
             if (lastDayOfMonth === "28") {
                 if ((sevenDayCheck == "6") || (sevenDayCheck == "-22")) {
                     toDate.style.borderColor = correct;
@@ -1048,8 +1102,6 @@ function changeStuff() {
                 }
             }
 
-            console.log(sevenDayCheck, er8, lastDayOfMonth);
-
             if (GoodsId.value < 2) {
                 GoodsId.style.borderColor = incorrect;
                 erText += er12;
@@ -1058,7 +1110,7 @@ function changeStuff() {
             else {
                 GoodsId.style.borderColor = correct;
             }
-
+            console.log(inventoryValue);
 
         }
 
