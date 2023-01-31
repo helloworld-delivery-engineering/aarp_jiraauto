@@ -145,8 +145,8 @@ function changeStuff() {
         const Gap = /Gap eGift Card/g;
         const EGiftSubstring = / eGift Card/gi;
         const EGiftSubstring2 = / E-Gift Card/gi;
-        const ItemValueValue = (Name.value
-        .trim());
+        const ItemValueValue = (Name.value.replace(/([a-zA-Z]|\s|\&|[®]|[™]|[’]|[']|[-])/g, ''))
+        .trim();
         const ShortName = Name.value
         .trim()
         .replace(/[$]/gi, '')
