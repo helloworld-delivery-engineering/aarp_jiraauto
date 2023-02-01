@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Jira Auto
 // @namespace    https://jiradc.helloworld.com/
-// @version      2.3
+// @version      2.3.1
 // @description  Efficiently and accurately creating new Rewards Catalog Item Jira tickets
 // @author       Colby Lostutter and the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -177,6 +177,7 @@ function changeStuff() {
         const TransactionNameValue = TransNameCamel.value;
         const TransNameLower = TransNameCamel.toLowerCase();
         const NewTransNameCamel = TransNameLower
+        .replace(/[^\w\s]/gi, '')
         .replace(/InstantWinPlay/gi, 'IW')
         .replace(/InstantWin/gi, 'IW')
         .replace(/DailyDeal/gi, 'DD')
@@ -243,7 +244,7 @@ function changeStuff() {
 
         const NewTransNameLower = NewTransNameCamel.toLowerCase();
         const PrimaryIDValue = SKUValue + NewTransNameLower;
-        const NewURL = SKUValue + NewTransNameLower;
+        const NewURL = SKUValue + NewTransNameLower.trim();
         const SweepsFinder = NewURL.substring(0, 1);
         const rewardType = document.getElementById('customfield_15702');
         var rewardTypeValue = rewardType.options[rewardType.selectedIndex].value;
@@ -264,6 +265,9 @@ function changeStuff() {
         .replace(/[0-9]/g, '')
         .replace(/[’]|[.]|[“]|[”]|[$]|[®]|[™]/gi, '')
         .replace(/[é]/gi, 'e');
+
+
+        console.log(NewURL, PrimaryIDValue);
 
         //Primary ID Creator
         if (isEC) {
@@ -286,7 +290,7 @@ function changeStuff() {
             DirectURL.value = 'https://www.aarp.org/rewards/redeem/' + NewURL + 'ec/';
         }
         else {
-            DirectURL.value = 'https://www.aarp.org/rewards/redeem/' + NewURL + '/';
+            DirectURL.value = 'https://www.aarp.org/rewards/redeem/' + PrimaryIDValue + '/';
         }
 
         ItemValue.value = ItemValueValue;
@@ -295,7 +299,7 @@ function changeStuff() {
 
         Name.value = NameTrim;
 
-        brandName.value = brandNameValue;
+        //brandName.value = brandNameValue;
 
         console.log(ShortName, prizePoolItemName, NameTrim, nameForSummary, brandNameValue);
 
@@ -551,7 +555,7 @@ function changeStuff() {
 
 
         //this is to auto-create the code_table name. It fills in the extra credit lesson input
-/*
+        /*
         var codeTable = document.getElementById('customfield_16502');
         var shortNameConversion = ShortName
         .replace(/(\s|\.|[®]|[™]|[’]|[']|[-])/g, '_')
@@ -663,7 +667,6 @@ function changeStuff() {
         .replace(/[$]/g, '');
         let ParticipantCostValue = ParticipantCost.value;
         let DisplayedSavingsNum = (RetailValueNum - ParticipantCostValue);
-        let DisplayedSavingsValue = ('$' + DisplayedSavingsNum);
         let DisplayedDiscountValue = (DisplayedSavingsNum / RetailValueNum);
         let DiscountPercent = Number(DisplayedDiscountValue).toLocaleString(undefined, {
             style: 'percent'
