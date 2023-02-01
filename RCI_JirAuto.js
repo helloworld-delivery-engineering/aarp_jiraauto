@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Jira Auto
 // @namespace    https://jiradc.helloworld.com/
-// @version      2.2
+// @version      2.3
 // @description  Efficiently and accurately creating new Rewards Catalog Item Jira tickets
 // @author       Colby Lostutter and the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -23,6 +23,8 @@
 // Summary added - Opp Number added
 // Clean Up and Participation cost updates 01-20-23
 // corrected mistake. V2.2
+// Fixed Februarys month number, revamped how prizepool is created, made Brand - Merchant field auto fill
+// created v2.3
 
 window.addEventListener('load', function() {
     'use strict';
@@ -258,6 +260,10 @@ function changeStuff() {
         var digitalCodeSiteURL = document.getElementById('customfield_17802');
         var oppNumber = document.getElementById('customfield_17006');
         var brandName = document.getElementById('customfield_16001');
+        var brandNameValue = nameForSummary
+        .replace(/[0-9]/g, '')
+        .replace(/[’]|[.]|[“]|[”]|[$]|[®]|[™]/gi, '')
+        .replace(/[é]/gi, 'e');
 
         //Primary ID Creator
         if (isEC) {
@@ -289,7 +295,9 @@ function changeStuff() {
 
         Name.value = NameTrim;
 
-        
+        brandName.value = brandNameValue;
+
+        console.log(ShortName, prizePoolItemName, NameTrim, nameForSummary, brandNameValue);
 
 
         if (isIW || isSweeps) {
@@ -370,7 +378,7 @@ function changeStuff() {
         }
         if (fromDateMonth === "Feb") {
             actualMonth += "February";
-            monthNumber += "1";
+            monthNumber += "2";
         }
         if (fromDateMonth === "Mar") {
             actualMonth += "March";
