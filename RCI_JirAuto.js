@@ -179,7 +179,6 @@ function changeStuff() {
         const TransactionNameValue = TransNameCamel.value;
         const TransNameLower = TransNameCamel.toLowerCase();
         const NewTransNameCamel = TransNameLower
-        .replace(/[^\w\s]/gi, '')
         .replace(/InstantWinPlay/gi, 'IW')
         .replace(/InstantWin/gi, 'IW')
         .replace(/DailyDeal/gi, 'DD')
@@ -246,7 +245,7 @@ function changeStuff() {
 
         const NewTransNameLower = NewTransNameCamel.toLowerCase();
         const PrimaryIDValue = SKUValue + NewTransNameLower;
-        const NewURL = SKUValue + NewTransNameLower.trim();
+        const NewURL = SKUValue + NewTransNameLower;
         const SweepsFinder = NewURL.substring(0, 1);
         const rewardType = document.getElementById('customfield_15702');
         var rewardTypeValue = rewardType.options[rewardType.selectedIndex].value;
