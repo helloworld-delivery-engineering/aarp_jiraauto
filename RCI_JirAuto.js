@@ -644,7 +644,12 @@ function changeStuff() {
         ParticipantCost.value = '';
         DisplayedSavings.value = "";
         DisplayedDiscount.value = "";
-        DisplayedSavings.value = RetailValue.value;
+        if ((isIW) || (isSweeps)) {
+            DisplayedSavings.value = '0';
+        }
+        else {
+            DisplayedSavings.value = DisplayedSavingsValue;
+        }
     }
 
     ParticipantCost.addEventListener("change", costModifier);
