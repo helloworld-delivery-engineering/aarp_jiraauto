@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Jira Auto
 // @namespace    https://jiradc.helloworld.com/
-// @version      2.3.1
+// @version      2.3.2
 // @description  Efficiently and accurately creating new Rewards Catalog Item Jira tickets
 // @author       Colby Lostutter and the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -25,6 +25,7 @@
 // corrected mistake. V2.2
 // Fixed Februarys month number, revamped how prizepool is created, made Brand - Merchant field auto fill
 // created v2.3
+// v2.3.2 Removed errant spaces in SKU
 
 window.addEventListener('load', function() {
     'use strict';
@@ -103,6 +104,7 @@ function changeStuff() {
         var NameTrim = Name.value.trim();
         var SKU = document.getElementById('customfield_16000');
         var SKUValue = SKU.value;
+        var SKUTrim = SKU.value.trim();
         let ItemValue = document.getElementById('customfield_16511');
         const PrimaryId = document.getElementById('customfield_16102');
         const GoodsId = document.getElementById('customfield_16400');
@@ -267,7 +269,7 @@ function changeStuff() {
         .replace(/[é]/gi, 'e');
 
 
-        console.log(NewURL, PrimaryIDValue);
+        console.log(PrimaryIDValue);
 
         //Primary ID Creator
         if (isEC) {
@@ -298,6 +300,7 @@ function changeStuff() {
         let GameUUID = document.getElementById('customfield_16500');
 
         Name.value = NameTrim;
+        SKU.value = SKUTrim;
 
         //brandName.value = brandNameValue;
 
