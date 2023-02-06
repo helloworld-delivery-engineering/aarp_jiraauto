@@ -372,7 +372,7 @@ function changeStuff() {
         //This sets the OAMOE URL
         var RewardsDeployValue = RewardsDeploy.value;
         const OamoeURL = document.getElementById('customfield_16517');
-        var oamoeRewardDeploy = (fromDateYear + sQ + "instantwin");
+        var oamoeRewardDeploy = (fromDateYear + Q + "instantwin");
         var theUUID = GameUUID.value.trim();
 
         if (isIW) {
