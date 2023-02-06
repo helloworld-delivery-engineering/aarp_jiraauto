@@ -86,6 +86,7 @@ function changeStuff() {
     var Name = document.getElementById('customfield_16503');
     var SKU = document.getElementById('customfield_16000');
     var fromDate = document.getElementById('customfield_17202');
+    var toDate = document.getElementById('customfield_17203');
     let GameUUID = document.getElementById('customfield_16500');
 
 
@@ -93,6 +94,7 @@ function changeStuff() {
     Name.onchange = totalUpdate;
     SKU.onchange = totalUpdate;
     fromDate.onchange = totalUpdate;
+    toDate.onchange = totalUpdate;
     GameUUID.onchange = totalUpdate;
 
 
@@ -224,6 +226,13 @@ function changeStuff() {
             var isDD = 1;
         }
 
+        // START AND END DATES CLEAR //
+        var startDate = document.getElementById('customfield_11113');
+        var endDate = document.getElementById('customfield_11112');
+
+
+        startDate.value = "";
+        endDate.value = "";
 
 
 
@@ -268,8 +277,6 @@ function changeStuff() {
         .replace(/[é]/gi, 'e');
 
 
-        console.log(PrimaryIDValue);
-
         //Primary ID Creator
         if (isEC) {
             PrimaryId.value = PrimaryIDValue + "ec"
@@ -298,12 +305,14 @@ function changeStuff() {
 
         let GameUUID = document.getElementById('customfield_16500');
 
+        var UUIDTrim = GameUUID.value.trim();
+
+        GameUUID.value = UUIDTrim;
         Name.value = NameTrim;
         SKU.value = SKUTrim;
 
         //brandName.value = brandNameValue;
 
-        console.log(ShortName, prizePoolItemName, NameTrim, nameForSummary, brandNameValue);
 
 
         if (isIW || isSweeps) {
@@ -359,77 +368,110 @@ function changeStuff() {
         }
 
 
+
         //This sets the OAMOE URL
         var RewardsDeployValue = RewardsDeploy.value;
         const OamoeURL = document.getElementById('customfield_16517');
-        var theUUID = GameUUID.value;
+        var oamoeRewardDeploy = (fromDateYear + sQ + "instantwin");
+        var theUUID = GameUUID.value.trim();
 
         if (isIW) {
-            OamoeURL.value = 'https://sweeps.aarp.org/' + RewardsDeployValue + '/oamoe_entry?game=' + theUUID;
+            OamoeURL.value = 'https://sweeps.aarp.org/' + oamoeRewardDeploy + '/oamoe_entry?game=' + theUUID;
         }
         else {
             OamoeURL.value = "";
         }
 
 
+
         //DISCLOSURE UPDATE
 
         var disclosureCopy = document.getElementById('customfield_16508');
-        var actualMonth = '';
         var monthNumber = '';
+        var pertinentMonth = "";
+        var pertinentDay = "";
+        var pertinentYear = "";
 
-        if (fromDateMonth === "Jan") {
-            actualMonth += "January";
+        //DATE CHECKER
+        if (isIW) {
+            pertinentMonth = toDateMonth;
+            pertinentDay = toDateDay;
+            pertinentYear = toDateYear;
+        }
+        else if (isSweeps) {
+            pertinentMonth = fromDateMonth;
+            pertinentDay = fromDateDay;
+            pertinentYear = fromDateYear;
+        }
+        var lastDayOfMonth = "";
+        if (pertinentMonth == "Feb") {
+            lastDayOfMonth = "28";
+        }
+        else if (pertinentMonth == "Apr" | pertinentMonth == "Jun" | pertinentMonth == "Sep" | pertinentMonth == "Nov") {
+            lastDayOfMonth = "30";
+        }
+        else {
+            lastDayOfMonth = "31"
+        }
+
+        var fullMonth = '';
+        var fromMonth = '';
+        var toMonth = '';
+
+
+        if (pertinentMonth === "Jan") {
+            fullMonth += "January";
             monthNumber += "1";
         }
-        if (fromDateMonth === "Feb") {
-            actualMonth += "February";
+        if (pertinentMonth === "Feb") {
+            fullMonth += "February";
             monthNumber += "2";
         }
-        if (fromDateMonth === "Mar") {
-            actualMonth += "March";
+        if (pertinentMonth === "Mar") {
+            fullMonth += "March";
             monthNumber += "3";
         }
-        if (fromDateMonth === "Apr") {
-            actualMonth += "April";
+        if (pertinentMonth === "Apr") {
+            fullMonth += "April";
             monthNumber += "4";
         }
-        if (fromDateMonth === "May") {
-            actualMonth += "May";
+        if (pertinentMonth === "May") {
+            fullMonth += "May";
             monthNumber += "5";
         }
-        if (fromDateMonth === "Jun") {
-            actualMonth += "June";
+        if (pertinentMonth === "Jun") {
+            fullMonth += "June";
             monthNumber += "6";
         }
-        if (fromDateMonth === "Jul") {
-            actualMonth += "July";
+        if (pertinentMonth === "Jul") {
+            fullMonth += "July";
             monthNumber += "7";
         }
-        if (fromDateMonth === "Aug") {
-            actualMonth += "August";
+        if (pertinentMonth === "Aug") {
+            fullMonth += "August";
             monthNumber += "8";
         }
-        if (fromDateMonth === "Sep") {
-            actualMonth += "September";
+        if (pertinentMonth === "Sep") {
+            fullMonth += "September";
             monthNumber += "9";
         }
-        if (fromDateMonth === "Oct") {
-            actualMonth += "October";
+        if (pertinentMonth === "Oct") {
+            fullMonth += "October";
             monthNumber += "10";
         }
-        if (fromDateMonth === "Nov") {
-            actualMonth += "November";
+        if (pertinentMonth === "Nov") {
+            fullMonth += "November";
             monthNumber += "11";
         }
-        if (fromDateMonth === "Dec") {
-            actualMonth += "December";
+        if (pertinentMonth === "Dec") {
+            fullMonth += "December";
             monthNumber += "12";
         }
 
+
+
         //Disclosure Date Setter
-        var thisMonth = fromDateMonth;
-        var lastDayOfMonth = "";
+        var thisMonth = "";
 
         if (thisMonth == "Feb") {
             lastDayOfMonth = "28";
@@ -441,7 +483,9 @@ function changeStuff() {
             lastDayOfMonth = "31"
         }
 
-        var readableDate = (actualMonth + ' ' + lastDayOfMonth +', 20'+fromDateYear);
+        var readableDate = "";
+
+        readableDate = (fullMonth + ' ' + toDateDay +', 20'+toDateYear);
 
         //TYPE OF ITEM
         var typeOfItem = "";
@@ -459,9 +503,11 @@ function changeStuff() {
             typeOfItem = "DD"
         }
 
+        //NEEDS TO ACCOMODATE FOR SUPER PLAY
 
-        summary.value = monthNumber + "/" + fromDateDay + " | " + typeOfItem + " | " + nameForSummary + ", " + SKUValue;
-        ;
+
+        //summary.value = monthNumber + "/" + fromDateDay + " | " + typeOfItem + " | " + nameForSummary + ", " + SKUValue;
+
         console.log(typeOfItem);
 
         // IW - SWEEPS ABSOLUTES
@@ -557,7 +603,7 @@ function changeStuff() {
 
 
         //this is to auto-create the code_table name. It fills in the extra credit lesson input
-        /*
+        /* 
         var codeTable = document.getElementById('customfield_16502');
         var shortNameConversion = ShortName
         .replace(/(\s|\.|[®]|[™]|[’]|[']|[-])/g, '_')
@@ -571,11 +617,11 @@ function changeStuff() {
         .replace(/__/g, '_');
 
         codeTable.value = (shortNameConversion + SKU.value.replace(/([-])/g, '_'));
-        */
+*/
 
     }
 
-    //END OF TOTAL UPDATE
+    //*************************END OF TOTAL UPDATE******************************
 
     //SKU CHECKER
 
@@ -589,8 +635,6 @@ function changeStuff() {
         var isIW = 1;
     }
 
-
-    console.log(skuChecker + "test2", isIW, isSweeps);
 
 
     //Primary ID Change Updates the Direct URL
@@ -689,11 +733,24 @@ function changeStuff() {
     function autoLow() {
         var inventory = document.getElementById('customfield_16101');
         var lowWatermark = document.getElementById('customfield_17206');
+        var SKU = document.getElementById('customfield_16000');
+        var SKUValue = SKU.value;
+        let skuChecker = SKUValue.substring(0, 2);
+        if ((skuChecker >= 30 && skuChecker <= 39)) {
+        var isIW = 1;
+        };
 
         lowWatermark.value = (inventory.value / 5);
-        console.log(inventory.value);
+        console.log(inventory.value, skuChecker, isIW);
+
+        if (isIW = 1 && inventory.value >= 51) {
+           //THis is where the update to the Summary Title for SUPER PLAYS can happen.
+        }
 
     }
+
+
+
 
     //ERROR HANDLING ON UPDATE BUTTON
 
@@ -701,18 +758,21 @@ function changeStuff() {
     updateButton.onclick = checkForErrors;
 
     function checkForErrors(e) {
+        alert('redo');
         var SKU = document.getElementById('customfield_16000');
         const rewardType = document.getElementById('customfield_15702');
         var rewardTypeValue = rewardType.options[rewardType.selectedIndex].value;
         var rewardTypeSelected = rewardType.options[rewardType.selectedIndex].text;
         var SKUValue = SKU.value;
-        const skuChecker = SKUValue.substring(0, 1);
+        const skuChecker = SKUValue.substring(0, 2);
 
         if ((skuChecker >= 40 && skuChecker <= 49)) {
             isSweeps = 1;
+            rewardTypeValue = "16447";
         }
         else if ((skuChecker >= 30 && skuChecker <= 39)) {
             isIW = 1;
+            rewardTypeValue = "16445";
         }
         else if ((skuChecker == 90 || skuChecker == 93)) {
             //isEC = 1;
@@ -768,7 +828,6 @@ function changeStuff() {
         var toDateMonth = toDate.value.replace(/(\s|[^a-zA-Z])/g, "");
         var longDescription = document.getElementById('customfield_16507');
         var longDescriptionValue = longDescription.value;
-
 
 
         //VENDOR CHECKER
@@ -842,7 +901,6 @@ function changeStuff() {
                 e.preventDefault();
             }
             else {
-                console.log('reward check');
                 points.style.borderColor = correct;
             }
         }
@@ -908,7 +966,10 @@ function changeStuff() {
 
         //SWEEP & IW CHECK
 
-        if ((isSweeps) || (isIW)) {
+        console.log(rewardTypeValue);
+
+        if (isSweeps == 1) {
+            alert('checking');
 
             if (rewardClientValue != '18200') {
                 rewardClient.style.borderColor = incorrect;
@@ -986,15 +1047,6 @@ function changeStuff() {
                 codeFormat.style.borderColor = correct;
             }
 
-        }
-
-        //Sweeps only CHECK
-        if (isSweeps) {
-
-            // VALID DATE CHECKER
-
-            console.log(lastDayOfMonth);
-
             if (lastDayOfMonth === "28") {
                 if ((fromDateDay == "1") && (toDateNum == "28")) {
                     toDate.style.borderColor = correct;
@@ -1031,16 +1083,15 @@ function changeStuff() {
                     e.preventDefault();
                 }
             }
-
+            /* WHAT IS THIS
             else {
                 toDate.style.borderColor = incorrect;
                 fromDate.style.borderColor = incorrect;
                 erText += er4;
                 e.preventDefault();
-            }
+            } */
 
             //Rewards Type
-
             if (rewardTypeValue != '16447') {
                 rewardType.style.borderColor = incorrect;
                 erText += er1;
@@ -1051,19 +1102,99 @@ function changeStuff() {
             }
 
 
+        console.log(rewardTypeValue);
         }
 
+
         //IW only CHECK
-        if (isIW) {
+        else if (isIW == 1) {
+            if (rewardClientValue != '18200') {
+                rewardClient.style.borderColor = incorrect;
+                erText += er2;
+                e.preventDefault();
+            }
+            else {
+                rewardClient.style.borderColor = correct;
+            }
+
+            if (lowWatermarkValue != '0') {
+                lowWatermark.style.borderColor = incorrect;
+                erText += er3;
+                e.preventDefault();
+            }
+            else {
+                lowWatermark.style.borderColor = correct;
+            }
+
+            if (availabilityValue != '16601') {
+                availability.style.borderColor = incorrect;
+                erText += er5;
+                e.preventDefault();
+            }
+            else {
+                availability.style.borderColor = correct;
+            }
+            if (supplierValue != '18202') {
+                supplier.style.borderColor = incorrect;
+                erText += er6;
+                e.preventDefault();
+            }
+            else {
+                supplier.style.borderColor = correct;
+            }
+
+            if (fulfillmentValue == '17400') {
+                fulfillment.style.borderColor = correct;
+            }
+            else {
+                fulfillment.style.borderColor = incorrect;
+                erText += er7;
+                e.preventDefault();
+            }
+            if (GameUUID.value.length < 3) {
+                GameUUID.style.borderColor = incorrect;
+                erText += er10;
+                e.preventDefault();
+            }
+            else {
+                GameUUID.style.borderColor = correct;
+            }
+            if (DisplayedSavings.value != "0") {
+                DisplayedSavings.style.borderColor = incorrect;
+                erText += er11;
+                e.preventDefault();
+            }
+            else {
+                DisplayedSavings.style.borderColor = correct;
+            }
+            if (points.value == "") {
+                points.style.borderColor = incorrect;
+                erText += er13;
+                e.preventDefault();
+            }
+            else {
+                points.style.borderColor = correct;
+            }
+            if (codeFormatValue != "17413") {
+                codeFormat.style.borderColor = incorrect;
+                erText += er14;
+                e.preventDefault();
+            }
+            else {
+                codeFormat.style.borderColor = correct;
+            }
 
             if (rewardTypeValue != '16445') {
                 rewardType.style.borderColor = incorrect;
                 erText += er1;
                 e.preventDefault();
+                alert('t');
             }
             else {
                 rewardType.style.borderColor = correct;
+                alert('s');
             }
+
 
             /*if ((inventoryValue != '125') || (inventoryValue != '450')) {
                 inventory.style.borderColor = incorrect;
@@ -1136,6 +1267,7 @@ function changeStuff() {
             var noErrors = confirm("OUTSTANDING! There appear to be no errors\n\n If you want to continue to use JiraAuto, you must refresh page after clicking OK.")
             }
         else {
+
             var errorText = ("Please check the following issues if in Verification\n\n" + erText);
             var rewardsTypeUpdate = confirm(errorText);
         }
