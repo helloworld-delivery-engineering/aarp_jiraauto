@@ -758,7 +758,6 @@ function changeStuff() {
     updateButton.onclick = checkForErrors;
 
     function checkForErrors(e) {
-        alert('redo');
         var SKU = document.getElementById('customfield_16000');
         const rewardType = document.getElementById('customfield_15702');
         var rewardTypeValue = rewardType.options[rewardType.selectedIndex].value;
@@ -969,8 +968,6 @@ function changeStuff() {
         console.log(rewardTypeValue);
 
         if (isSweeps == 1) {
-            alert('checking');
-
             if (rewardClientValue != '18200') {
                 rewardClient.style.borderColor = incorrect;
                 erText += er2;
@@ -1188,11 +1185,9 @@ function changeStuff() {
                 rewardType.style.borderColor = incorrect;
                 erText += er1;
                 e.preventDefault();
-                alert('t');
             }
             else {
                 rewardType.style.borderColor = correct;
-                alert('s');
             }
 
 
