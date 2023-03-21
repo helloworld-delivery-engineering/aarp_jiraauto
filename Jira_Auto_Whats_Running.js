@@ -1,13 +1,15 @@
 // ==UserScript==
 // @name         WHATS RUNNING
 // @namespace    https://jiradc.helloworld.com/
-// @version      1.0
+// @version      1.1
 // @description  Creates a DIV that will house the other divs notifying what scripts are running.
 // @author       Colby Lostutter
 // @match        https://jiradc.helloworld.com/*
 // @grant        none
 // @run-at       document-end
 // ==/UserScript==
+
+// 1.1 Testing Updates
 
 (function() {
     'use strict';
