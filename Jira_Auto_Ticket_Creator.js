@@ -120,6 +120,7 @@ function changeStuff() {
         .replace(/Daily Deal/gi, '')
         .replace(/Extra Credit/gi, '')
         .replace(/Sweepstakes/gi, '')
+        .replace(/ eGiftCard/gi, '')
         .replace(/ eGift Card/gi, '')
         .replace(/ E-Gift card/gi, '')
         .replace(/ Gift Card/gi, '')
@@ -364,7 +365,7 @@ function changeStuff() {
         var oamoeRewardDeploy = (fromDateYear + Q + "instantwin");
         var theUUID = GameUUID.value.trim();
 
-        if ((isIW && UUIDTBD)) {
+        if (isIW && UUIDTBD) {
             OamoeURL.value = 'https://sweeps.aarp.org/' + oamoeRewardDeploy + '/oamoe_entry?game=' + theUUID;
         }
         else {
@@ -526,7 +527,6 @@ function changeStuff() {
             }
             else {
                 summary.value = summaryValue;
-                alert('else');
             }
         }
 
@@ -548,7 +548,8 @@ function changeStuff() {
 
 
         if (isSweeps) {
-            var sweepsfilterTagsSelected = filterTags.options[filterTags.selectedIndex];
+            var sweepsfilterTagsSelected = '';
+            sweepsfilterTagsSelected = filterTags.options[filterTags.selectedIndex];
             rewardType.selectedIndex = 10;
             DisplayedSavings.value = "0";
             rewardClient.selectedIndex = 1;
@@ -583,7 +584,8 @@ function changeStuff() {
             disclosureCopy.value = '<p>*No Points Necessary. See <a title="Hyperlink to the Official Rules" href="https://www.aarp.org/about-aarp/rewards-terms-and-conditions/sweeps-rules/" target="_blank">*Official Rules</a> for alternate method of entry, odds and all details. Void where prohibited. Must enter by ' + readableDate + ' at 11:59 p.m. ET. Limit 10 entries per day per person. Open only to AARP Rewards participants who reside in the 50 U.S. (D.C.). Void in PR, Guam and the USVI. </p>';
         }
         if (isIW) {
-            var iwfilterTagsSelected = filterTags.options[filterTags.selectedIndex].text;
+            var iwfilterTagsSelected = '';
+            iwfilterTagsSelected = filterTags.options[filterTags.selectedIndex].text;
             rewardType.selectedIndex = 3;
             DisplayedSavings.value = "0";
             rewardClient.selectedIndex = 1;
