@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NEW Jira Auto - Ticket Creator
 // @namespace    https://jiradc.helloworld.com/
-// @version      3.0
+// @version      3.1
 // @description  Efficiently and accurately creating new Rewards Catalog Item Jira tickets
 // @author       Colby Lostutter for the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -12,6 +12,7 @@
 
 
 // v3.0 - Breaking up Jira Auto into seperate Userscripts to make it less cumbersome and more focused on what part of Jira Auto you want to work with.
+// v3.1 - Updating ShortName to not remove the first character in Contributions
 // AVAILABLE MODULES
 // WHAT'S RUNNNIG - hightlights which components of Jira Auto that are currently active. Should always be running
 // Jira Auto - Ticket Creator
@@ -86,7 +87,7 @@ function changeStuff() {
         let ItemValue = document.getElementById('customfield_16511');
         const PrimaryId = document.getElementById('customfield_16102');
         let GameUUID = document.getElementById('customfield_16500');
-        const GoodsId = document.getElementById('customfield_16400');
+        const DetailLink = document.getElementById('customfield_16400');
         const DirectURL = document.getElementById('customfield_16516');
         const TileTitle = document.getElementById('customfield_16504');
         const ImageURL = document.getElementById('customfield_17302');
@@ -140,7 +141,6 @@ function changeStuff() {
         .replace(/Daily Deal/gi, '')
         .replace(/Extra Credit/gi, '')
         .replace(/\s+$/, '')
-        .substring(1)
         .trim();
         let TransNameValue = Name.value
         .replace(EGiftSubstring, ' Gift Card')
@@ -186,27 +186,54 @@ function changeStuff() {
         //SKU CHECKER
         let skuChecker = SKUValue.substring(0, 2);
 
-        if ((skuChecker >= 40 && skuChecker <= 49)) {
-            var isSweeps = 1;
+        if (skuChecker == 10 || skuChecker == 13) {
+            var isPO = 1;
+        }
+        else if (skuChecker >= 11 && skuChecker < 12) {
+            var isContribution = 1;
+        }
+        else if (skuChecker == 12) {
+            var isDD = 1;
         }
         else if ((skuChecker >= 30 && skuChecker <= 39)) {
             var isIW = 1;
         }
-        else if ((skuChecker >= 90 || skuChecker <= 93)) {
-            var isEC = 1;
+        else if ((skuChecker >= 40 && skuChecker <= 49)) {
+            var isSweeps = 1;
         }
-        else if ((skuChecker == 10 || skuChecker >= 12)) {
-            var isPO = 1;
-        }
-        else if ((skuChecker == 60 || skuChecker >= 69)) {
+        else if (skuChecker == 60) {
             var isEGreeting = 1;
         }
-        else if ((skuChecker == 11)) {
-            var isContribution = 1;
+        else if ((skuChecker >= 90 && skuChecker <= 93)) {
+            var isEC = 1;
         }
-        else if ((skuChecker == 12)) {
-            var isDD = 1;
+
+        //TYPE OF ITEM
+        var typeOfItem = "";
+
+        if (isIW) {
+            typeOfItem = "IW"
         }
+        else if (isSweeps) {
+            typeOfItem = "Sweeps"
+        }
+        else if (isEC) {
+            typeOfItem = "EC"
+        }
+        else if (isDD) {
+            typeOfItem = "DD"
+        }
+        else if (isPO) {
+            typeOfItem = "PO"
+        }
+        else if (isEGreeting) {
+            typeOfItem = "is Greeting"
+        }
+        else if (isContribution) {
+            typeOfItem = "is Contribution"
+        }
+
+
 
         // START AND END DATES CLEAR //
         var startDate = document.getElementById('customfield_11113');
@@ -257,6 +284,8 @@ function changeStuff() {
 
         Name.value = NameTrim;
 
+        DetailLink.value = "https://aarp-rewards.promo.eprize.com/api/v3/goods/" + PrimaryIDValue + "/detail/";
+
         //Primary ID Creator
         if (isEC) {
             PrimaryId.value = PrimaryIDValue + "ec"
@@ -281,6 +310,7 @@ function changeStuff() {
             DirectURL.value = 'https://www.aarp.org/rewards/redeem/' + PrimaryIDValue + '/';
         }
 
+
         ItemValue.value = ItemValueValue;
 
         if (isIW || isSweeps) {
@@ -293,9 +323,9 @@ function changeStuff() {
                 var UUIDTBD = 1;
             }
 
-            if (GoodsId.value == "") {
-                GoodsId.value = "TBD";
-            }
+            //if (GoodsId.value == "") {
+            //  GoodsId.value = "TBD";
+            //}
 
             var UUIDTrim = GameUUID.value.trim();
 
@@ -477,21 +507,7 @@ function changeStuff() {
 
         readableDate = (fullMonth + ' ' + toDateDay +', 20'+toDateYear);
 
-        //TYPE OF ITEM
-        var typeOfItem = "";
 
-        if (isIW) {
-            typeOfItem = "IW"
-        }
-        else if (isSweeps) {
-            typeOfItem = "Sweeps"
-        }
-        else if (isEC) {
-            typeOfItem = "EC"
-        }
-        else if (isDD) {
-            typeOfItem = "DD"
-        }
 
 
 
@@ -531,7 +547,11 @@ function changeStuff() {
         }
 
 
-        console.log(typeOfItem);
+        console.log(typeOfItem, SKUValue);
+
+        if (isDD) {
+            disclosureCopy.value = '<p>*New offer available to the first 150 AARP Rewards members (50 U.S. (D.C.)) each weekday (Monday through Friday) while supplies last. You may only purchase this gift card one time. You may purchase up to 5 gift cards per month. Fulfilled as a digital gift code.</p>'
+        }
 
         // IW - SWEEPS ABSOLUTES
 
@@ -627,44 +647,6 @@ function changeStuff() {
     //*************************END OF TOTAL UPDATE******************************
 
 
-
-
-    /*
-    GameUUID.onchange = oamoeChanger;
-
-    function oamoeChanger() {
-        //REWARDS DEPLOY PATH CREATOR
-        var SN = fromDateMonth;
-        var Q = "";
-        var sQ = "";
-
-        if (SN == "Jan" || SN == "Feb" || SN == "Mar") {
-            Q = "q1";
-        }
-        else if (SN == "Apr" || SN == "May" || SN == "Jun") {
-            Q = "q2";
-        }
-        else if (SN == "Jul" || SN == "Aug" || SN == "Sep") {
-            Q = "q3";
-        }
-        else if (SN == "Oct" || SN == "Nov" || SN == "Dec") {
-            Q = "q4";
-        }
-        //FROM DATE
-        const fromDate = document.getElementById('customfield_17202');
-        let fromDateValue = fromDate.value;
-        const fromDateDay = fromDateValue.match(/\d{2}(?=\/)|\d{1}(?=\/)/g);
-        const fromDateMonth = fromDate.value.replace(/(\s|[^a-zA-Z])/g, "");
-        let fromDateYear = fromDate.value.match(/\d+$/);
-        const OamoeURL = document.getElementById('customfield_16517');
-        var oamoeRewardDeploy = (fromDateYear + Q + "instantwin");
-        var UUIDTrim = GameUUID.value.trim();
-        GameUUID.value = UUIDTrim;
-        if (isIW) {
-            OamoeURL.value = 'https://sweeps.aarp.org/' + oamoeRewardDeploy + '/oamoe_entry?game=' + UUIDTrim;
-        }
-    }
-    */
 
     //Primary ID Change Updates the Direct URL
 
