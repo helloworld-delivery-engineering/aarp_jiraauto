@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NEW Jira Auto - Ticket Creator
 // @namespace    https://jiradc.helloworld.com/
-// @version      3.1
+// @version      3.2
 // @description  Efficiently and accurately creating new Rewards Catalog Item Jira tickets
 // @author       Colby Lostutter for the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -13,12 +13,14 @@
 
 // v3.0 - Breaking up Jira Auto into seperate Userscripts to make it less cumbersome and more focused on what part of Jira Auto you want to work with.
 // v3.1 - Updating ShortName to not remove the first character in Contributions
+// v3.2 - Added Detail Link
 // AVAILABLE MODULES
 // WHAT'S RUNNNIG - hightlights which components of Jira Auto that are currently active. Should always be running
 // Jira Auto - Ticket Creator
 // Code Table - Creator
 // Jira Auto - Verification
 // Game UUID - URL Updater
+
 
 window.addEventListener('load', function() {
     'use strict';
@@ -87,7 +89,8 @@ function changeStuff() {
         let ItemValue = document.getElementById('customfield_16511');
         const PrimaryId = document.getElementById('customfield_16102');
         let GameUUID = document.getElementById('customfield_16500');
-        const DetailLink = document.getElementById('customfield_16400');
+        const goodsId = document.getElementById('customfield_16400');
+        const DetailLink = document.getElementById('customfield_18400');
         const DirectURL = document.getElementById('customfield_16516');
         const TileTitle = document.getElementById('customfield_16504');
         const ImageURL = document.getElementById('customfield_17302');
@@ -284,6 +287,8 @@ function changeStuff() {
 
         Name.value = NameTrim;
 
+        goodsId.value = "";
+
         DetailLink.value = "https://aarp-rewards.promo.eprize.com/api/v3/goods/" + PrimaryIDValue + "/detail/";
 
         //Primary ID Creator
@@ -323,9 +328,7 @@ function changeStuff() {
                 var UUIDTBD = 1;
             }
 
-            //if (GoodsId.value == "") {
-            //  GoodsId.value = "TBD";
-            //}
+           
 
             var UUIDTrim = GameUUID.value.trim();
 
@@ -545,7 +548,6 @@ function changeStuff() {
                 summary.value = summaryValue;
             }
         }
-
 
         console.log(typeOfItem, SKUValue);
 
