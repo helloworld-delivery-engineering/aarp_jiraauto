@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NEW Jira Auto - Ticket Creator
 // @namespace    https://jiradc.helloworld.com/
-// @version      3.2
+// @version      3.3
 // @description  Efficiently and accurately creating new Rewards Catalog Item Jira tickets
 // @author       Colby Lostutter for the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -14,13 +14,13 @@
 // v3.0 - Breaking up Jira Auto into seperate Userscripts to make it less cumbersome and more focused on what part of Jira Auto you want to work with.
 // v3.1 - Updating ShortName to not remove the first character in Contributions
 // v3.2 - Added Detail Link
+// v3.3 - Added Constrain date auto fill for Sweeps & Removed invisible characters
 // AVAILABLE MODULES
 // WHAT'S RUNNNIG - hightlights which components of Jira Auto that are currently active. Should always be running
 // Jira Auto - Ticket Creator
 // Code Table - Creator
 // Jira Auto - Verification
 // Game UUID - URL Updater
-
 
 window.addEventListener('load', function() {
     'use strict';
@@ -82,7 +82,10 @@ function changeStuff() {
     function totalUpdate(e) {
         var PointsField = document.getElementById('customfield_16515');
         var Name = document.getElementById('customfield_16503');
-        var NameTrim = Name.value.trim();
+
+        const NameValue = Name.value
+        .replace(/[​]/g, ''); //Removes invisible characters
+        var NameTrim = NameValue.trim();
         var SKU = document.getElementById('customfield_16000');
         var SKUValue = SKU.value;
         var SKUTrim = SKU.value.trim();
@@ -116,7 +119,7 @@ function changeStuff() {
         const toDateMonth = toDate.value.replace(/(\s|[^a-zA-Z])/g, "");
         let toDateYear = toDate.value.match(/\d+$/);
         const summary = document.getElementById('summary');
-        const nameForSummary = Name.value
+        const nameForSummary = NameValue
         .replace(/[’]/g, "'")
         .replace(/[']/g, "")
         .replace(/ Instant Win Play/gi, '')
@@ -133,9 +136,9 @@ function changeStuff() {
         const Gap = /Gap eGift Card/g;
         const EGiftSubstring = / eGift Card/gi;
         const EGiftSubstring2 = / E-Gift Card/gi;
-        const ItemValueValue = (Name.value.replace(/([a-zA-Z]|\s|\&|[®]|[™]|[’]|[']|[-]|[.])/g, ''))
+        const ItemValueValue = (NameValue.replace(/([a-zA-Z]|\s|\&|[®]|[™]|[’]|[']|[-]|[.])/g, ''))
         .trim();
-        const ShortName = Name.value
+        const ShortName = NameValue
         .trim()
         .replace(/[$]/gi, '')
         .replace(/[’]/g, "'")
@@ -145,7 +148,7 @@ function changeStuff() {
         .replace(/Extra Credit/gi, '')
         .replace(/\s+$/, '')
         .trim();
-        let TransNameValue = Name.value
+        let TransNameValue = NameValue
         .replace(EGiftSubstring, ' Gift Card')
         .replace(EGiftSubstring2, ' Gift Card')
         .replace(/[^\w\s]/gi, '')
@@ -170,9 +173,10 @@ function changeStuff() {
         .replace(/GiftCardSweeps/gi, 'Sweeps')
         .replace(/DigitalReward/gi, '');
 
-        var prizePoolItemName = Name.value
+        var prizePoolItemName = NameValue
         .replace(/[0-9]/g, '')
         .replace(/[-]|[’]|[.]|[,]|[“]|[”]|[®]|[$]|[™]/gi, '')
+        .replace(/[é]/g, "e")
         .replace(/[’]/g, "'")
         .replace(/[']/g, "")
         .replace(/ Instant Win Play/gi, '')
@@ -182,7 +186,7 @@ function changeStuff() {
         .replace(/Sweepstakes/gi, '')
         .trim();
 
-        if (Name.value == "") {
+        if (NameValue == "") {
             Name.focus();
         }
 
@@ -252,8 +256,8 @@ function changeStuff() {
         }
 
         else if (isSweeps) {
-            AEMTileTitle.value = Name.value.trim() + "*";
-            AEMTitle.value = Name.value.trim() + "*";
+            AEMTileTitle.value = NameValue.trim() + "*";
+            AEMTitle.value = NameValue.trim() + "*";
         }
         else {
             AEMTileTitle.value = ShortName;
@@ -285,7 +289,7 @@ function changeStuff() {
         .replace(/[é]/gi, 'e');
 
 
-        Name.value = NameTrim;
+        NameValue = NameTrim;
 
         goodsId.value = "";
 
@@ -333,11 +337,18 @@ function changeStuff() {
             var UUIDTrim = GameUUID.value.trim();
 
             GameUUID.value = UUIDTrim;
-            Name.value = NameTrim;
+            NameValue = NameTrim;
             SKU.value = SKUTrim;
         }
 
         //brandName.value = brandNameValue;
+
+        var constrainDate = document.getElementById('customfield_18600');
+        constrainDate.value = "";
+
+        if (isSweeps) {
+            constrainDate.value = ("5/" + fromDateMonth + "/" + fromDateYear);
+        }
 
         if (isIW || isSweeps) {
             PrizePoolName.value = (SKUValue + " " + prizePoolItemName + " " + fromDateMonth + " 20" + fromDateYear);
@@ -550,9 +561,16 @@ function changeStuff() {
         }
 
         console.log(typeOfItem, SKUValue);
+        let RetailValue = document.getElementById('customfield_16511');
+        let RetailValueNum = RetailValue.value
 
         if (isDD) {
-            disclosureCopy.value = '<p>*New offer available to the first 150 AARP Rewards members (50 U.S. (D.C.)) each weekday (Monday through Friday) while supplies last. You may only purchase this gift card one time. You may purchase up to 5 gift cards per month. Fulfilled as a digital gift code.</p>'
+            if (RetailValue.length == 1 ) {
+                disclosureCopy.value = '<p>*New offer available to the first 150 AARP Rewards members (50 U.S. (D.C.)) each weekday (Monday through Friday) while supplies last. You may only purchase this gift card one time. You may purchase up to 5 gift cards per month. Fulfilled as a digital gift code.</p>'
+            }
+            else {
+                disclosureCopy.value = 'yes';
+            }
         }
 
         // IW - SWEEPS ABSOLUTES
