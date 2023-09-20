@@ -85,7 +85,7 @@ function changeStuff() {
 
         var NameValue = Name.value
         .replace(/[​]/g, ''); //Removes invisible characters
-        Name.value = NameValue;
+        Name.value = NameValue.trim();
         var NameTrim = NameValue.trim();
         var SKU = document.getElementById('customfield_16000');
         var SKUValue = SKU.value;
