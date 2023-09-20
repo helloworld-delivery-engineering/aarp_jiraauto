@@ -83,8 +83,9 @@ function changeStuff() {
         var PointsField = document.getElementById('customfield_16515');
         var Name = document.getElementById('customfield_16503');
 
-        const NameValue = Name.value
+        var NameValue = Name.value
         .replace(/[​]/g, ''); //Removes invisible characters
+        Name.value = NameValue;
         var NameTrim = NameValue.trim();
         var SKU = document.getElementById('customfield_16000');
         var SKUValue = SKU.value;
