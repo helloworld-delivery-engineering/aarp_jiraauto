@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NEW Jira Auto - Ticket Creator
 // @namespace    https://jiradc.helloworld.com/
-// @version      3.3
+// @version      3.4
 // @description  Efficiently and accurately creating new Rewards Catalog Item Jira tickets
 // @author       Colby Lostutter for the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -15,6 +15,7 @@
 // v3.1 - Updating ShortName to not remove the first character in Contributions
 // v3.2 - Added Detail Link
 // v3.3 - Added Constrain date auto fill for Sweeps & Removed invisible characters
+// v3.4 - Updated Summary to allow for IW's to put in correct month based on FROM date not TO date.
 // AVAILABLE MODULES
 // WHAT'S RUNNNIG - hightlights which components of Jira Auto that are currently active. Should always be running
 // Jira Auto - Ticket Creator
@@ -441,6 +442,7 @@ function changeStuff() {
             pertinentDay = fromDateDay;
             pertinentYear = fromDateYear;
         }
+
         var lastDayOfMonth = "";
         if (pertinentMonth == "Feb") {
             lastDayOfMonth = "28";
@@ -497,7 +499,7 @@ function changeStuff() {
             fullMonth += "October";
             monthNumber += "10";
         }
-        if (pertinentMonth === "Nov") {
+        if (pertinentMonth === "Nov" || summaryMonth === "Nov") {
             fullMonth += "November";
             monthNumber += "11";
         }
@@ -505,6 +507,58 @@ function changeStuff() {
             fullMonth += "December";
             monthNumber += "12";
         }
+
+//SUMMARY MONTH SET
+
+        var summaryMonth = fromDateMonth;
+        var summaryMonthNumber = '';
+
+        if (summaryMonth === "Jan") {
+            summaryMonthNumber += "1";
+        }
+        if (summaryMonth === "Feb") {
+            summaryMonthNumber += "2";
+        }
+        if (summaryMonth === "Mar") {
+            summaryMonthNumber += "3";
+        }
+        if (summaryMonth === "Apr") {
+            summaryMonthNumber += "4";
+        }
+        if (summaryMonth === "May") {
+            summaryMonthNumber += "5";
+        }
+        if (summaryMonth === "Jun") {
+            summaryMonthNumber += "6";
+        }
+        if (summaryMonth === "Jul") {
+            summaryMonthNumber += "7";
+        }
+        if (summaryMonth === "Aug") {
+            summaryMonthNumber += "8";
+        }
+        if (summaryMonth === "Sep") {
+            summaryMonthNumber += "9";
+        }
+        if (summaryMonth === "Oct") {
+            summaryMonthNumber += "10";
+        }
+        if (summaryMonth === "Nov") {
+            summaryMonthNumber += "11";
+        }
+        if (summaryMonth === "Dec") {
+            summaryMonthNumber += "12";
+        }
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -537,7 +591,7 @@ function changeStuff() {
 */
         var inventory = document.getElementById('customfield_16101');
         var inventoryValue = inventory.value;
-        var summaryValue = monthNumber + "/" + fromDateDay + " | " + typeOfItem + " | " + nameForSummary + ", " + SKUValue;
+        var summaryValue = summaryMonthNumber + "/" + fromDateDay + " | " + typeOfItem + " | " + nameForSummary + ", " + SKUValue;
 
         //NEEDS TO ACCOMODATE FOR SUPER PLAY
 
@@ -554,7 +608,7 @@ function changeStuff() {
             var inventory = document.getElementById('customfield_16101');
             var inventoryValue = inventory.value;
             var summary = document.getElementById('summary');
-            var summaryValue = monthNumber + "/" + fromDateDay + " | " + typeOfItem + " | " + nameForSummary + ", " + SKUValue;
+            var summaryValue = summaryMonthNumber + "/" + fromDateDay + " | " + typeOfItem + " | " + nameForSummary + ", " + SKUValue;
 
             if ((isIW && inventoryValue >= 126)) {
                 summary.value = summaryValue + " *SUPER PLAY*";
@@ -564,7 +618,9 @@ function changeStuff() {
             }
         }
 
-        console.log(typeOfItem, SKUValue);
+        console.log(typeOfItem, SKUValue); //CONSOLE LOG
+
+
         let RetailValue = document.getElementById('customfield_16511');
         let RetailValueNum = RetailValue.value
 
