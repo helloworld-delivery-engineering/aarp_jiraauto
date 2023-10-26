@@ -16,7 +16,7 @@
 // v3.2 - Added Detail Link
 // v3.3 - Added Constrain date auto fill for Sweeps & Removed invisible characters
 // v3.4 - Updated Summary to allow for IW's to put in correct month based on FROM date not TO date.
-// v3.5 - Updated Primary ID to include the abbreviation of what it is where necessary. ALSO, Removed AARP FOUNDATION Points Contribution from NAME to reduce its length
+// v3.5 - Updated Primary ID to include the abbreviation of what it is where necessary. ALSO, Removed AARP FOUNDATION Points Contribution from Primary ID to reduce its length
 
 
 // AVAILABLE MODULES
@@ -88,8 +88,7 @@ function changeStuff() {
         var Name = document.getElementById('customfield_16503');
 
         var NameValue = Name.value
-        .replace(/[​]/g, '') //Removes invisible characters
-        .replace(/AARP Foundation Points Contribution -/g, '');
+        .replace(/[​]/g, '') //Removes invisible characters;
         Name.value = NameValue.trim();
         var NameTrim = NameValue.trim();
         var SKU = document.getElementById('customfield_16000');
@@ -280,7 +279,8 @@ function changeStuff() {
         const NewTransNameLower = NewTransNameCamel.toLowerCase();
         var primaryIDName = prizePoolItemName
         .toLowerCase()
-        .replace(/\s/g, "");
+        .replace(/\s/g, "")
+        .replace(/aarpfoundationpointscontribution/g, '');
         console.log(prizePoolItemName + endOfPrimaryID);
         const PrimaryIDValue = SKUValue + primaryIDName + endOfPrimaryID
         .trim();
