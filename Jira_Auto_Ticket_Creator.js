@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NEW Jira Auto - Ticket Creator
 // @namespace    https://jiradc.helloworld.com/
-// @version      3.4
+// @version      3.5
 // @description  Efficiently and accurately creating new Rewards Catalog Item Jira tickets
 // @author       Colby Lostutter for the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -16,6 +16,9 @@
 // v3.2 - Added Detail Link
 // v3.3 - Added Constrain date auto fill for Sweeps & Removed invisible characters
 // v3.4 - Updated Summary to allow for IW's to put in correct month based on FROM date not TO date.
+// v3.5 - Updated Primary ID to include the abbreviation of what it is where necessary. ALSO, Removed AARP FOUNDATION Points Contribution from NAME to reduce its length
+
+
 // AVAILABLE MODULES
 // WHAT'S RUNNNIG - hightlights which components of Jira Auto that are currently active. Should always be running
 // Jira Auto - Ticket Creator
@@ -85,7 +88,8 @@ function changeStuff() {
         var Name = document.getElementById('customfield_16503');
 
         var NameValue = Name.value
-        .replace(/[​]/g, ''); //Removes invisible characters
+        .replace(/[​]/g, '') //Removes invisible characters
+        .replace(/AARP Foundation Points Contribution -/g, '');
         Name.value = NameValue.trim();
         var NameTrim = NameValue.trim();
         var SKU = document.getElementById('customfield_16000');
@@ -188,6 +192,7 @@ function changeStuff() {
         .replace(/Sweepstakes/gi, '')
         .trim();
 
+
         if (NameValue == "") {
             Name.focus();
         }
@@ -219,27 +224,33 @@ function changeStuff() {
 
         //TYPE OF ITEM
         var typeOfItem = "";
+        var endOfPrimaryID = "";
 
         if (isIW) {
-            typeOfItem = "IW"
+            typeOfItem = "IW";
+            endOfPrimaryID = "iw";
         }
         else if (isSweeps) {
-            typeOfItem = "Sweeps"
+            typeOfItem = "Sweeps";
+            endOfPrimaryID = "sweeps";
         }
         else if (isEC) {
-            typeOfItem = "EC"
+            typeOfItem = "EC";
+            endOfPrimaryID = "ec";
         }
         else if (isDD) {
-            typeOfItem = "DD"
+            typeOfItem = "DD";
+            endOfPrimaryID = "dd";
         }
         else if (isPO) {
             typeOfItem = "PO"
         }
         else if (isEGreeting) {
-            typeOfItem = "is Greeting"
+            typeOfItem = "Greeting Card";
+            endOfPrimaryID = "egreetingcard";
         }
         else if (isContribution) {
-            typeOfItem = "is Contribution"
+            typeOfItem = "Contribution"
         }
 
 
@@ -267,7 +278,12 @@ function changeStuff() {
         }
 
         const NewTransNameLower = NewTransNameCamel.toLowerCase();
-        const PrimaryIDValue = SKUValue + NewTransNameLower;
+        var primaryIDName = prizePoolItemName
+        .toLowerCase()
+        .replace(/\s/g, "");
+        console.log(prizePoolItemName + endOfPrimaryID);
+        const PrimaryIDValue = SKUValue + primaryIDName + endOfPrimaryID
+        .trim();
         const NewURL = SKUValue + NewTransNameLower;
         const SweepsFinder = NewURL.substring(0, 1);
         const rewardType = document.getElementById('customfield_15702');
@@ -291,6 +307,7 @@ function changeStuff() {
         .replace(/[é]/gi, 'e');
 
 
+
         NameValue = NameTrim;
 
         goodsId.value = "";
@@ -298,11 +315,11 @@ function changeStuff() {
         DetailLink.value = "https://aarp-rewards.promo.eprize.com/api/v3/goods/" + PrimaryIDValue + "/detail/";
 
         //Primary ID Creator
-        if (isEC) {
-            PrimaryId.value = PrimaryIDValue + "ec"
-        }
-        else {
-            PrimaryId.value = PrimaryIDValue;
+        PrimaryId.value = PrimaryIDValue;
+
+        if (Name.value.length > 160) {
+            alert("Current Name is too long for LMP - Please reduce it's  to less than 60 characters");
+            Name.focus();
         }
 
         //ADDS content to field if it isn't already filled because of a clone
@@ -334,7 +351,6 @@ function changeStuff() {
                 var UUIDTBD = 1;
             }
 
-           
 
             var UUIDTrim = GameUUID.value.trim();
 
@@ -549,16 +565,6 @@ function changeStuff() {
         if (summaryMonth === "Dec") {
             summaryMonthNumber += "12";
         }
-
-
-
-
-
-
-
-
-
-
 
 
 
