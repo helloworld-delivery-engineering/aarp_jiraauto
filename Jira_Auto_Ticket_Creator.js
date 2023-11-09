@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NEW Jira Auto - Ticket Creator
 // @namespace    https://jiradc.helloworld.com/
-// @version      3.5
+// @version      3.5.2
 // @description  Efficiently and accurately creating new Rewards Catalog Item Jira tickets
 // @author       Colby Lostutter for the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -17,7 +17,7 @@
 // v3.3 - Added Constrain date auto fill for Sweeps & Removed invisible characters
 // v3.4 - Updated Summary to allow for IW's to put in correct month based on FROM date not TO date.
 // v3.5 - Updated Primary ID to include the abbreviation of what it is where necessary. ALSO, Removed AARP FOUNDATION Points Contribution from Primary ID to reduce its length
-
+// v3.5.3 - Corrections made to Remove "&" and ":" from Primary ID - Prizepool
 
 // AVAILABLE MODULES
 // WHAT'S RUNNNIG - hightlights which components of Jira Auto that are currently active. Should always be running
@@ -127,6 +127,7 @@ function changeStuff() {
         const nameForSummary = NameValue
         .replace(/[’]/g, "'")
         .replace(/[']/g, "")
+        .replace(/[:]/g, "")
         .replace(/ Instant Win Play/gi, '')
         .replace(/ Instant Win/gi, '')
         .replace(/Daily Deal/gi, '')
@@ -180,7 +181,8 @@ function changeStuff() {
 
         var prizePoolItemName = NameValue
         .replace(/[0-9]/g, '')
-        .replace(/[-]|[’]|[.]|[,]|[“]|[”]|[®]|[$]|[™]/gi, '')
+        .replace(/[-]|[’]|[.]|[,]|[“]|[”]|[®]|[$]|[™]|[:]/gi, '')
+        .replace(/ &/, "")
         .replace(/[é]/g, "e")
         .replace(/[’]/g, "'")
         .replace(/[']/g, "")
