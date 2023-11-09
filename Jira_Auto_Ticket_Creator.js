@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NEW Jira Auto - Ticket Creator
 // @namespace    https://jiradc.helloworld.com/
-// @version      3.5.2
+// @version      3.5
 // @description  Efficiently and accurately creating new Rewards Catalog Item Jira tickets
 // @author       Colby Lostutter for the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -142,7 +142,8 @@ function changeStuff() {
         const Gap = /Gap eGift Card/g;
         const EGiftSubstring = / eGift Card/gi;
         const EGiftSubstring2 = / E-Gift Card/gi;
-        const ItemValueValue = (NameValue.replace(/([a-zA-Z]|\s|\&|[®]|[™]|[’]|[']|[-]|[.])/g, ''))
+        const ItemValueValue = (NameValue.replace(/([a-zA-Z]|\s|\&|[®]|[™]|[’]|[']|[-]|[.]|[:])/g, ''))
+        .replace(/1800/g, '')
         .trim();
         const ShortName = NameValue
         .trim()
@@ -286,7 +287,7 @@ function changeStuff() {
         console.log(prizePoolItemName + endOfPrimaryID);
         const PrimaryIDValue = SKUValue + primaryIDName + endOfPrimaryID
         .trim();
-        const NewURL = SKUValue + NewTransNameLower;
+        const NewURL = PrimaryIDValue;
         const SweepsFinder = NewURL.substring(0, 1);
         const rewardType = document.getElementById('customfield_15702');
         var rewardTypeValue = rewardType.options[rewardType.selectedIndex].value;
