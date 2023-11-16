@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NEW Jira Auto - Ticket Creator
 // @namespace    https://jiradc.helloworld.com/
-// @version      3.5
+// @version      3.5.4
 // @description  Efficiently and accurately creating new Rewards Catalog Item Jira tickets
 // @author       Colby Lostutter for the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -18,6 +18,7 @@
 // v3.4 - Updated Summary to allow for IW's to put in correct month based on FROM date not TO date.
 // v3.5 - Updated Primary ID to include the abbreviation of what it is where necessary. ALSO, Removed AARP FOUNDATION Points Contribution from Primary ID to reduce its length
 // v3.5.3 - Corrections made to Remove "&" and ":" from Primary ID - Prizepool
+// v3.5.4 - Removed "*" from Primary ID - included SKU "14***" in Daily Deals
 
 // AVAILABLE MODULES
 // WHAT'S RUNNNIG - hightlights which components of Jira Auto that are currently active. Should always be running
@@ -182,7 +183,7 @@ function changeStuff() {
 
         var prizePoolItemName = NameValue
         .replace(/[0-9]/g, '')
-        .replace(/[-]|[’]|[.]|[,]|[“]|[”]|[®]|[$]|[™]|[:]/gi, '')
+        .replace(/[-]|[’]|[.]|[,]|[“]|[”]|[®]|[$]|[™]|[:]|[*]/gi, '')
         .replace(/ &/, "")
         .replace(/[é]/g, "e")
         .replace(/[’]/g, "'")
@@ -208,7 +209,7 @@ function changeStuff() {
         else if (skuChecker >= 11 && skuChecker < 12) {
             var isContribution = 1;
         }
-        else if (skuChecker == 12) {
+        else if (skuChecker == 12 || skuChecker == 14) {
             var isDD = 1;
         }
         else if ((skuChecker >= 30 && skuChecker <= 39)) {
