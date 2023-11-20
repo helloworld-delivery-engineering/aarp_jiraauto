@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NEW Jira Auto - Ticket Creator
 // @namespace    https://jiradc.helloworld.com/
-// @version      3.5.4
+// @version      3.5.5
 // @description  Efficiently and accurately creating new Rewards Catalog Item Jira tickets
 // @author       Colby Lostutter for the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -19,6 +19,7 @@
 // v3.5 - Updated Primary ID to include the abbreviation of what it is where necessary. ALSO, Removed AARP FOUNDATION Points Contribution from Primary ID to reduce its length
 // v3.5.3 - Corrections made to Remove "&" and ":" from Primary ID - Prizepool
 // v3.5.4 - Removed "*" from Primary ID - included SKU "14***" in Daily Deals
+// v3.5.5 - Updating OPP numbers for 2024
 
 // AVAILABLE MODULES
 // WHAT'S RUNNNIG - hightlights which components of Jira Auto that are currently active. Should always be running
@@ -408,6 +409,9 @@ function changeStuff() {
             if (RewardsDeploy.value == "aarp/23q4instantwin") {
                 oppNumber.value = '258736';
             }
+            if (RewardsDeploy.value == "aarp/24q1instantwin") {
+                oppNumber.value = '259097';
+            }
         }
         else if (isSweeps) {
             if ((Q == "q1" || Q == "q2")) {
@@ -419,6 +423,8 @@ function changeStuff() {
             RewardsDeploy.value = ("aarp/" + fromDateYear + sQ + "sweepstakes");
             if (RewardsDeploy.value == "aarp/23q1q2sweepstakes") {
                 oppNumber.value = '256965';
+            if (RewardsDeploy.value == "aarp/24q1q2sweepstakes") {
+                oppNumber.value = '259098';
             }
 
         }
