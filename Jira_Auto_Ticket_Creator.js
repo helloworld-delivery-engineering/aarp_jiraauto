@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NEW Jira Auto - Ticket Creator
 // @namespace    https://jiradc.helloworld.com/
-// @version      3.5.5
+// @version      3.5.6
 // @description  Efficiently and accurately creating new Rewards Catalog Item Jira tickets
 // @author       Colby Lostutter for the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -20,6 +20,7 @@
 // v3.5.3 - Corrections made to Remove "&" and ":" from Primary ID - Prizepool
 // v3.5.4 - Removed "*" from Primary ID - included SKU "14***" in Daily Deals
 // v3.5.5 - Updating OPP numbers for 2024
+// v3.5.6 - Fix error
 
 // AVAILABLE MODULES
 // WHAT'S RUNNNIG - hightlights which components of Jira Auto that are currently active. Should always be running
