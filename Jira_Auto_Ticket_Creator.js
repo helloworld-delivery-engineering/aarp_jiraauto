@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NEW Jira Auto - Ticket Creator
 // @namespace    https://jiradc.helloworld.com/
-// @version      3.5.6
+// @version      3.5.7
 // @description  Efficiently and accurately creating new Rewards Catalog Item Jira tickets
 // @author       Colby Lostutter for the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -21,6 +21,7 @@
 // v3.5.4 - Removed "*" from Primary ID - included SKU "14***" in Daily Deals
 // v3.5.5 - Updating OPP numbers for 2024
 // v3.5.6 - Fix error
+// v3.5.7 - Added DD Disclosure copy
 
 // AVAILABLE MODULES
 // WHAT'S RUNNNIG - hightlights which components of Jira Auto that are currently active. Should always be running
@@ -185,7 +186,7 @@ function changeStuff() {
 
         var prizePoolItemName = NameValue
         .replace(/[0-9]/g, '')
-        .replace(/[-]|[’]|[.]|[,]|[“]|[”]|[®]|[$]|[™]|[:]|[*]/gi, '')
+        .replace(/[-]|[’]|[.]|[,]|[“]|[”]|[‘]|[®]|[$]|[™]|[:]|[*]/gi, '')
         .replace(/ &/, "")
         .replace(/[é]/g, "e")
         .replace(/[’]/g, "'")
@@ -644,10 +645,10 @@ function changeStuff() {
 
         if (isDD) {
             if (RetailValue.length == 1 ) {
-                disclosureCopy.value = '<p>*New offer available to the first 150 AARP Rewards members (50 U.S. (D.C.)) each weekday (Monday through Friday) while supplies last. You may only purchase this gift card one time. You may purchase up to 5 gift cards per month. Fulfilled as a digital gift code.</p>'
+                disclosureCopy.value = '<p>*New offer available to the first 150 AARP Rewards members (50 U.S. (D.C.)) each weekday (Monday through Friday) while supplies last. You may only purchase this gift card one time. You may purchase up to 5 gift cards per month. Fulfilled as a digital gift code. This digital gift card is non-refundable. In some instances delivery may take longer than 24 hours. </p>'
             }
             else {
-                disclosureCopy.value = 'yes';
+                disclosureCopy.value = '<p>*New offer available to the first 150 AARP Rewards members (50 U.S. (D.C.)) each weekday (Monday through Friday) while supplies last. You may only purchase this gift card one time. You may purchase up to 5 gift cards per month. Fulfilled as a digital gift code. This digital gift card is non-refundable. In some instances delivery may take longer than 24 hours. </p>';
             }
         }
 
@@ -777,7 +778,7 @@ function changeStuff() {
 
     let RetailValue = document.getElementById('customfield_16511');
     let RetailValueNum = RetailValue.value
-    .replace(/[$]/g, '');
+    .replace(/[$]|[‘]/g, '');
     let ParticipantCost = document.getElementById('customfield_16512');
     let ParticipantCostValue = ParticipantCost.value;
     let DisplayedSavings = document.getElementById('customfield_16513');
@@ -827,7 +828,7 @@ function changeStuff() {
         let DisplayedDiscount = document.getElementById('customfield_16514');
         let PointsField = document.getElementById('customfield_16515');
         let RetailValueNum = RetailValue.value
-        .replace(/[$]/g, '');
+        .replace(/[$]|[‘]/g, '');
         let ParticipantCostValue = ParticipantCost.value;
         let DisplayedSavingsNum = (RetailValueNum - ParticipantCostValue);
         let DisplayedDiscountValue = (DisplayedSavingsNum / RetailValueNum);
