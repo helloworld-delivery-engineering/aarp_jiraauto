@@ -22,6 +22,7 @@
 // v3.5.5 - Updating OPP numbers for 2024
 // v3.5.6 - Fix error
 // v3.5.7 - Added DD Disclosure copy
+// v3.5.8 - Updated IW OPP number for q2 (3/5/24)
 
 // AVAILABLE MODULES
 // WHAT'S RUNNNIG - hightlights which components of Jira Auto that are currently active. Should always be running
@@ -413,6 +414,9 @@ function changeStuff() {
             }
             if (RewardsDeploy.value == "aarp/24q1instantwin") {
                 oppNumber.value = '259097';
+            }
+            if (RewardsDeploy.value == "aarp/24q2instantwin") {
+                oppNumber.value = '259643';
             }
         }
         else if (isSweeps) {
@@ -877,4 +881,3 @@ function changeStuff() {
     }
 
 }
-
