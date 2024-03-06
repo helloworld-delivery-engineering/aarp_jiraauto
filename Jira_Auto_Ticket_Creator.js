@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NEW Jira Auto - Ticket Creator
 // @namespace    https://jiradc.helloworld.com/
-// @version      3.5.7
+// @version      3.5.8
 // @description  Efficiently and accurately creating new Rewards Catalog Item Jira tickets
 // @author       Colby Lostutter for the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
