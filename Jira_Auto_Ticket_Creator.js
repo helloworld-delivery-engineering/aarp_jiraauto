@@ -50,6 +50,7 @@ window.addEventListener('load', function() {
     script_active_notification_div.style.width = "100%";
     notification_containing_div.append(script_active_notification_div);
     document.execCommand('createBtn');
+    var test=1;
 
 })
 
