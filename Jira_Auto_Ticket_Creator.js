@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NEW Jira Auto - Ticket Creator
 // @namespace    https://jiradc.helloworld.com/
-// @version      3.5.8
+// @version      3.5.9
 // @description  Efficiently and accurately creating new Rewards Catalog Item Jira tickets
 // @author       Colby Lostutter for the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -23,6 +23,7 @@
 // v3.5.6 - Fix error
 // v3.5.7 - Added DD Disclosure copy
 // v3.5.8 - Updated IW OPP number for q2 (3/5/24)
+// v3.5.9 - Updated IW OPP number for q3 and Sweeps q3/q4 (4/30/24)
 
 // AVAILABLE MODULES
 // WHAT'S RUNNNIG - hightlights which components of Jira Auto that are currently active. Should always be running
@@ -418,6 +419,9 @@ function changeStuff() {
             if (RewardsDeploy.value == "aarp/24q2instantwin") {
                 oppNumber.value = '259643';
             }
+            if (RewardsDeploy.value == "aarp/24q3instantwin") {
+                oppNumber.value = '259973';
+            }
         }
         else if (isSweeps) {
             if ((Q == "q1" || Q == "q2")) {
@@ -432,6 +436,9 @@ function changeStuff() {
             }
             if (RewardsDeploy.value == "aarp/24q1q2sweepstakes") {
                 oppNumber.value = '259098';
+            }
+            if (RewardsDeploy.value == "aarp/24q3q4sweepstakes") {
+                oppNumber.value = '259974';
             }
 
         }
