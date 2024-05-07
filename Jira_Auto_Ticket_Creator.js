@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NEW Jira Auto - Ticket Creator
 // @namespace    https://jiradc.helloworld.com/
-// @version      3.5.9
+// @version      3.5.10
 // @description  Efficiently and accurately creating new Rewards Catalog Item Jira tickets
 // @author       Colby Lostutter for the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -24,6 +24,7 @@
 // v3.5.7 - Added DD Disclosure copy
 // v3.5.8 - Updated IW OPP number for q2 (3/5/24)
 // v3.5.9 - Updated IW OPP number for q3 and Sweeps q3/q4 (4/30/24)
+// v3.5.10 - Removes Narrow No-Break Space that are found in word docs (5/7/24)
 
 // AVAILABLE MODULES
 // WHAT'S RUNNNIG - hightlights which components of Jira Auto that are currently active. Should always be running
@@ -95,6 +96,7 @@ function changeStuff() {
 
         var NameValue = Name.value
         .replace(/[​]/g, '') //Removes invisible characters;
+        .replace(/[\u202F\u00A0]/, " ")//Removes Narrow No-Break Space
         Name.value = NameValue.trim();
         var NameTrim = NameValue.trim();
         var SKU = document.getElementById('customfield_16000');
