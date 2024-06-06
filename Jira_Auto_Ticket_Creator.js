@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NEW Jira Auto - Ticket Creator
 // @namespace    https://jiradc.helloworld.com/
-// @version      3.5.10
+// @version      3.5.11
 // @description  Efficiently and accurately creating new Rewards Catalog Item Jira tickets
 // @author       Colby Lostutter for the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -25,6 +25,7 @@
 // v3.5.8 - Updated IW OPP number for q2 (3/5/24)
 // v3.5.9 - Updated IW OPP number for q3 and Sweeps q3/q4 (4/30/24)
 // v3.5.10 - Removes Narrow No-Break Space that are found in word docs (5/7/24)
+// v3.5.11 - Updated Prizepool Name ampersand removal to accomodate for H&M since it had no spaces.(6/6/24)
 
 // AVAILABLE MODULES
 // WHAT'S RUNNNIG - hightlights which components of Jira Auto that are currently active. Should always be running
@@ -191,7 +192,8 @@ function changeStuff() {
         var prizePoolItemName = NameValue
         .replace(/[0-9]/g, '')
         .replace(/[-]|[’]|[.]|[,]|[“]|[”]|[‘]|[®]|[$]|[™]|[:]|[*]/gi, '')
-        .replace(/ &/, "")
+        .replace(/&/, "")
+        .replace(/  /, "")
         .replace(/[é]/g, "e")
         .replace(/[’]/g, "'")
         .replace(/[']/g, "")
