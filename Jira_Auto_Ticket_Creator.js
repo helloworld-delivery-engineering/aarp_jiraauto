@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NEW Jira Auto - Ticket Creator
 // @namespace    https://jiradc.helloworld.com/
-// @version      3.5.11
+// @version      3.5.12
 // @description  Efficiently and accurately creating new Rewards Catalog Item Jira tickets
 // @author       Colby Lostutter for the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -26,6 +26,7 @@
 // v3.5.9 - Updated IW OPP number for q3 and Sweeps q3/q4 (4/30/24)
 // v3.5.10 - Removes Narrow No-Break Space that are found in word docs (5/7/24)
 // v3.5.11 - Updated Prizepool Name ampersand removal to accomodate for H&M since it had no spaces.(6/6/24)
+// v3.5.12 - Sweepstakes will always select "Electronically Fulfilled" in Fulfillment Details now. (6/14/24)
 
 // AVAILABLE MODULES
 // WHAT'S RUNNNIG - hightlights which components of Jira Auto that are currently active. Should always be running
@@ -691,6 +692,7 @@ function changeStuff() {
             ParticipantCost.value = "";
             goodsType.selectedIndex = 4;
             lowWatermark.value = "0";
+            fulfillment.checked = true;
             codeFormatURL.selectedIndex = 1;
             document.getElementById('customfield_16401').setAttribute("multiple", "multiple");
 
