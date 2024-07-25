@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NEW Jira Auto - Ticket Creator
 // @namespace    https://jiradc.helloworld.com/
-// @version      3.5.12
+// @version      3.5.15
 // @description  Efficiently and accurately creating new Rewards Catalog Item Jira tickets
 // @author       Colby Lostutter for the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -27,6 +27,9 @@
 // v3.5.10 - Removes Narrow No-Break Space that are found in word docs (5/7/24)
 // v3.5.11 - Updated Prizepool Name ampersand removal to accomodate for H&M since it had no spaces.(6/6/24)
 // v3.5.12 - Sweepstakes will always select "Electronically Fulfilled" in Fulfillment Details now. (6/14/24)
+// v3.5.13 - Check primary ID length and alert if it is over 60 characters (7/25/24)
+// v3.5.14 - Updates made to Primary ID are now updated in Detail Link and Direct Link. (7/25/24)
+// v3.5.15 - Add Opp number for 24q4instantwin (7/25/24)
 
 // AVAILABLE MODULES
 // WHAT'S RUNNNIG - hightlights which components of Jira Auto that are currently active. Should always be running
@@ -322,6 +325,8 @@ function changeStuff() {
 
 
 
+
+
         NameValue = NameTrim;
 
         goodsId.value = "";
@@ -336,10 +341,40 @@ function changeStuff() {
             Name.focus();
         }
 
+        console.log(PrimaryId.value);
+        ////
+
+        if (PrimaryId.value.length > 60) {
+            alert("Primary ID is too long for LMP - Please reduce the NAME LENGTH so that it reduces the Primary ID to under 60 Characters");
+            PrimaryId.focus();
+        }
+
+
+        //Primary ID Change Updates the Direct URL and Detail Link
+        var existingPrimaryId = document.getElementById('customfield_16102');
+        var existingPrimaryIdValue = existingPrimaryId.value;
+        var existingDetailLink = document.getElementById('customfield_18400');
+        existingPrimaryId.onchange = updateURL;
+        function updateURL(e) {
+            var updatedDirectURL = document.getElementById('customfield_16516');
+            var updatedDetailLink = document.getElementById('customfield_18400');
+            var newPrimaryId = document.getElementById('customfield_16102');
+            updatedDirectURL.value = "https://www.aarp.org/rewards/redeem/" + SKU.value + newPrimaryId.value;
+            updatedDetailLink.value = "https://aarp-rewards.promo.eprize.com/api/v3/goods/" + newPrimaryId.value + "/detail/";
+        }
+
+
+
+
+
+
+
         //ADDS content to field if it isn't already filled because of a clone
         if (ImageURL.value.length < 61) {
             ImageURL.value = "https://cdn.aarp.net/content/dam/aarp/rewards/redeem/catalog/";
         }
+
+        ImageURL.trim();
 
         //Direct URL creator
         if (isSweeps) {
@@ -426,6 +461,9 @@ function changeStuff() {
             }
             if (RewardsDeploy.value == "aarp/24q3instantwin") {
                 oppNumber.value = '259973';
+            }
+            if (RewardsDeploy.value == "aarp/24q4instantwin") {
+                oppNumber.value = '260456';
             }
         }
         else if (isSweeps) {
