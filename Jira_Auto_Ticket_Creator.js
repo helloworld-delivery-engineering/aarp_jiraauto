@@ -371,7 +371,6 @@ function changeStuff() {
 
         ImageURL.onchange = imageURLTrim;
         function imageURLTrim(e) {
-            alert('ugh');
             var ImageURLValue = ImageURL.value.replace(/ /, "")
                  .trim();
             ImageURL.value = ImageURLValue;
