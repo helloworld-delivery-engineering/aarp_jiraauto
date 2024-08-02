@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NEW Jira Auto - Ticket Creator
 // @namespace    https://jiradc.helloworld.com/
-// @version      3.5.15
+// @version      3.5.16
 // @description  Efficiently and accurately creating new Rewards Catalog Item Jira tickets
 // @author       Colby Lostutter for the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -28,8 +28,9 @@
 // v3.5.11 - Updated Prizepool Name ampersand removal to accomodate for H&M since it had no spaces.(6/6/24)
 // v3.5.12 - Sweepstakes will always select "Electronically Fulfilled" in Fulfillment Details now. (6/14/24)
 // v3.5.13 - Check primary ID length and alert if it is over 60 characters (7/25/24)
-// v3.5.14 - Updates made to Primary ID are now updated in Detail Link and Direct Link. (7/25/24)
-// v3.5.15 - Add Opp number for 24q4instantwin (7/25/24)
+// v3.5.14 - Any updates made to Primary ID are now updated in Detail Link and Direct Link. (7/25/24)
+// v3.5.15 - Add Opp number for 24q4instantwin
+// v3.5.16 - Updating Image URL Trimmer which was creating errors.
 
 // AVAILABLE MODULES
 // WHAT'S RUNNNIG - hightlights which components of Jira Auto that are currently active. Should always be running
@@ -326,7 +327,6 @@ function changeStuff() {
 
 
 
-
         NameValue = NameTrim;
 
         goodsId.value = "";
@@ -341,7 +341,6 @@ function changeStuff() {
             Name.focus();
         }
 
-        console.log(PrimaryId.value);
         ////
 
         if (PrimaryId.value.length > 60) {
@@ -365,16 +364,18 @@ function changeStuff() {
 
 
 
-
-
-
-
         //ADDS content to field if it isn't already filled because of a clone
         if (ImageURL.value.length < 61) {
             ImageURL.value = "https://cdn.aarp.net/content/dam/aarp/rewards/redeem/catalog/";
         }
 
-        ImageURL.trim();
+        ImageURL.onchange = imageURLTrim;
+        function imageURLTrim(e) {
+            alert('ugh');
+            var ImageURLValue = ImageURL.value.replace(/ /, "")
+                 .trim();
+            ImageURL.value = ImageURLValue;
+        }
 
         //Direct URL creator
         if (isSweeps) {
