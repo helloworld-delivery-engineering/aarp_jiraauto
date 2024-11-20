@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         LP Jira Auto - Ticket Creator
 // @namespace    https://jiradc.helloworld.com/
-// @version      1.0
+// @version      1.1
 // @description  Modification of New Jira Auto - Ticket Creator 3.5.16 to adapt to Loyalty Plus
 // @author       Colby Lostutter for the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -178,6 +178,8 @@ function changeStuff() {
         .replace(/DigitalReward/gi, '');
 
         var prizePoolItemName = NameValue
+        .replace(/e-/gi,'')
+        .replace(/egift /gi,'gift')
         .replace(/[0-9]/g, '')
         .replace(/[-]|[’]|[.]|[,]|[“]|[”]|[‘]|[®]|[$]|[™]|[:]|[*]/gi, '')
         .replace(/&/, "")
@@ -190,41 +192,136 @@ function changeStuff() {
         .replace(/Daily Deal/gi, '')
         .replace(/Extra Credit/gi, '')
         .replace(/Sweepstakes/gi, '')
+        //.replace(/egift/gi, 'gift')
         .trim();
 
-
+//NOTES if points dont do total of savings (arv minus cost) and percentage but make savings match arv for points
 
         //SKU CHECKER
-        let skuChecker = SKUValue.substring(0, 2);
 
-        if (skuChecker == 10 || skuChecker == 13) {
-            var isPO = 1;
+        let skuChecker = SKUValue.substring(0, 2);
+        var whichRewardType;
+        var fulfillmentType = '';
+        var externalID1;
+
+        if (skuChecker == 10 || skuChecker < 11) {
+            whichRewardType = 'isPOPointsPreloadedURLDigitalItemType';
+            externalID1 = 1;
+            var isPOPointsPreloadedURLDigitalItemType = 1;
         }
-        else if (skuChecker >= 11 && skuChecker < 12) {
-            var isContribution = 1;
+        else if (skuChecker == 11 || skuChecker < 12) {
+            whichRewardType = 'isContributions';
+            externalID1 = 1;
+            var isContributions = 1; //
         }
-        else if (skuChecker == 12 || skuChecker == 14) {
-            var isDD = 1;
+        else if (skuChecker == 12 || skuChecker < 13) {
+            whichRewardType = 'isDDHistoric';
+            var isDDHistoric = 1;
         }
-        else if ((skuChecker >= 30 && skuChecker <= 39)) {
+        else if (skuChecker == 13 || skuChecker < 14) {
+            whichRewardType = 'isPOIncommPointsDigitalItemType';
+            var isPOIncommPointsDigitalItemType = 1;
+        }
+        //NEW
+        else if (skuChecker == 14 || skuChecker < 15) {
+            whichRewardType = 'isDDIncommPurchaseDigitalRewardType';
+            var isDDIncommPurchaseDigitalRewardType = 1;
+        }
+        else if (skuChecker == 15 || skuChecker < 16) {
+            whichRewardType = 'isPointsPreloadedCodeDigitalItemType';
+            var isPointsPreloadedCodeDigitalItemType = 1;
+        }
+        else if (skuChecker == 16 || skuChecker < 17) {
+            whichRewardType = 'isPointsPreloadedCodeNonSavingsDigitalItemType';
+            var isPointsPreloadedCodeNonSavingsDigitalItemType = 1;
+        }
+        else if (skuChecker == 17 || skuChecker < 20) {
+            whichRewardType = 'isPointsPreloadedSameCodeDigitalItemType';
+            var isPointsPreloadedSameCodeDigitalItemType = 1;
+        }
+        else if (skuChecker == 20 || skuChecker < 29) {
+            whichRewardType = 'isSureShipPhysicalItems';
+            var isSureShipPhysicalItems = 1;
+        }
+        else if ((skuChecker == 30 || skuChecker < 40)) {
+            whichRewardType = 'isIW';
             var isIW = 1;
         }
-        else if ((skuChecker >= 40 && skuChecker <= 49)) {
-            var isSweeps = 1;
+        else if ((skuChecker == 40 || skuChecker < 42)) {
+            whichRewardType = 'isDigitalSweeps';
+            var isDigitalSweeps = 1;
         }
-        else if ((skuChecker >= 55 && skuChecker <= 59)) {
-            var isGCFP = 1;
+        else if ((skuChecker == 42 || skuChecker < 44)) {
+            whichRewardType = 'isPhysicalSweeps';
+            var isPhysicalSweeps = 1;
         }
-        else if (skuChecker == 60) {
-            var isEGreeting = 1;
+        else if ((skuChecker == 44 || skuChecker < 50)) {
+            whichRewardType = 'isDigitalSweeps';
+            var isDigitalSweeps2 = 1;
         }
-        else if ((skuChecker >= 90 && skuChecker <= 93)) {
-            var isEC = 1;
+        // 55 is gift card promos needs promo at end of externalId and summary needs gcfppromo -
+        else if ((skuChecker == 50 || skuChecker < 53)) {
+            whichRewardType = 'isGCFPHistoric';
+            var isGCFPHistoric = 1;
         }
+        else if ((skuChecker == 53 || skuChecker < 55)) {
+            whichRewardType = 'isGCFPDigitalItemType';
+            var isGCFPDigitalItemType = 1;
+        }
+        else if ((skuChecker == 55 || skuChecker < 56)) {
+            whichRewardType = 'isGCFPPromo';
+            var isGCFPPromo = 1;
+        }
+        else if ((skuChecker == 56 || skuChecker < 57)) {
+            whichRewardType = 'isGCFPPreloadedURLDigitalItemType';
+            var isGCFPPreloadedURLDigitalItemType = 1;
+        }
+        else if ((skuChecker == 57 || skuChecker < 60)) {
+            whichRewardType = 'isGCFPPreloadedCodeDigitalItemType';
+            var isGCFPPreloadedCodeDigitalItemType = 1;
+        }//
+        else if ((skuChecker == 60 || skuChecker < 70)) {
+            whichRewardType = 'isGreetingCards';
+            externalID1 = 1;
+            var isGreetingCards = 1;
+        }
+        else if ((skuChecker == 70 || skuChecker < 80)) {
+            whichRewardType = 'isPFIBI';
+            var isPFIBI = 1;
+        }
+
+        else if ((skuChecker == 80 || skuChecker < 81)) {
+            whichRewardType = 'isExperiencesDigitalDownloads';
+            var isExperiencesDigitalDownloads = 1;
+        }
+        //
+        else if ((skuChecker == 90 || skuChecker < 93)) {
+            whichRewardType = 'isECHistoric';
+            var isECHistoric = 1;
+        }
+        //
+        else if ((skuChecker == 93 || skuChecker < 96)) {
+            whichRewardType = 'isECIncommPurchaseDigitalItemType';
+            var isECIncommPurchaseDigitalItemType = 1;
+        }
+        //
+        else if ((skuChecker == 96 || skuChecker < 99)) {
+            whichRewardType = 'isECIncommPointsDigitalItemType';
+            var isECIncommPointsDigitalItemType = 1;
+        }
+
+
+
+
+        console.log(whichRewardType);
 
         const rewardType = document.getElementById('customfield_19701');
         var rewardTypeValue = rewardType.options[rewardType.selectedIndex].value;
         var rewardTypeSelected = rewardType.options[rewardType.selectedIndex].text;
+
+        const itemType = document.getElementById('customfield_19705');
+        var itemTypeValue = itemType.options[itemType.selectedIndex].value;
+        var itemTypeSelected = itemType.options[itemType.selectedIndex].text;
 
 
         //TYPE OF ITEM
@@ -233,45 +330,139 @@ function changeStuff() {
 
         if (isIW) {
             typeOfItem = "IW";
-            externalIdEnd = "iw";
             rewardType.selectedIndex = 8;
+            itemType.selectedIndex = 14;
+            externalIdEnd = "iw";
         }
-        else if (isSweeps) {
+        else if (isPhysicalSweeps) {
+            typeOfItem = "Sweeps - Physical";
+            externalIdEnd = "sweeps";
+            rewardType.selectedIndex = 9;
+            itemType.selectedIndex = 15;
+        }
+        else if (isDigitalSweeps) {
             typeOfItem = "Sweeps";
             externalIdEnd = "sweeps";
             rewardType.selectedIndex = 9;
+            itemType.selectedIndex = 16;
         }
-        else if (isEC) {
-            typeOfItem = "EC";
-            externalIdEnd = "ec";
-            rewardType.selectedIndex = 4;
+        else if (isDigitalSweeps2) {
+            typeOfItem = "Sweeps";
+            externalIdEnd = "sweeps";
+            rewardType.selectedIndex = 9;
+            itemType.selectedIndex = 16;
         }
-        else if (isDD) {
+        else if (isPOPointsPreloadedURLDigitalItemType) {
+            typeOfItem = "PO"
+            rewardType.selectedIndex = 3;
+            itemType.selectedIndex = 6;
+        }
+        else if (isContributions) {
+            typeOfItem = "Contribution"
+            rewardType.selectedIndex = 3;
+            itemType.selectedIndex = 3;
+        }
+        else if (isDDHistoric) {
             typeOfItem = "DD";
             externalIdEnd = "dd";
             rewardType.selectedIndex = 1;
+            itemType.selectedIndex = 11;
         }
-        else if (isPO) {
+        else if (isDDIncommPurchaseDigitalRewardType) {
+            typeOfItem = "DD";
+            externalIdEnd = "dd";
+            rewardType.selectedIndex = 1;
+            itemType.selectedIndex = 2;
+        }
+        else if (isPointsPreloadedCodeDigitalItemType) {
+            typeOfItem = "PO";
+            rewardType.selectedIndex = 3;
+            itemType.selectedIndex = 7;
+        }
+        else if (isPointsPreloadedCodeNonSavingsDigitalItemType) {
+            typeOfItem = "PO";
+            rewardType.selectedIndex = 3;
+            itemType.selectedIndex = 8;
+        }
+        else if (isPointsPreloadedSameCodeDigitalItemType) {
+            typeOfItem = "PO";
+            rewardType.selectedIndex = 3;
+            itemType.selectedIndex = 9;
+        }
+        else if (isSureShipPhysicalItems) {
+            typeOfItem = "Physical";
+            rewardType.selectedIndex = 3;
+            itemType.selectedIndex = 10;
+        }
+        else if (isGCFPHistoric) {
+            typeOfItem = "GCFP"
+            rewardType.selectedIndex = 6;
+            itemType.selectedIndex = 0;
+        }
+        else if (isGCFPDigitalItemType) {
+            typeOfItem = "GCFP"
+            rewardType.selectedIndex = 6;
+            itemType.selectedIndex = 2;
+        }
+        else if (isGCFPPromo) {
+            typeOfItem = "GCFP"
+            rewardType.selectedIndex = 6;
+            itemType.selectedIndex = 0;
+        }
+        else if (isGCFPPreloadedURLDigitalItemType) {
+            typeOfItem = "GCFP"
+            rewardType.selectedIndex = 6;
+            itemType.selectedIndex = 11;
+        }
+        else if (isGCFPPreloadedCodeDigitalItemType) {
+            typeOfItem = "GCFP"
+            rewardType.selectedIndex = 6;
+            itemType.selectedIndex = 11;
+        }
+        else if (isGreetingCards) {
+            typeOfItem = "E-Greeting Card";
+            //externalIdEnd = "egreetingcard";
+            rewardType.selectedIndex = 2;
+            itemType.selectedIndex = 4;
+        }
+        else if (isPFIBI) {
+            typeOfItem = "PFIBI";
+            externalIdEnd = "isPFBI";
+            rewardType.selectedIndex = 2;
+            itemType.selectedIndex = 4;
+        }
+        else if (isExperiencesDigitalDownloads) {
+            typeOfItem = "Digital Download"
+            rewardType.selectedIndex = 2;
+            itemType.selectedIndex = 4;
+        }
+
+
+        else if (isECHistoric) {
+            typeOfItem = "EC";
+            externalIdEnd = "ec";
+            rewardType.selectedIndex = 4;
+            itemType.selectedIndex = 2;
+        }
+        else if (isECIncommPurchaseDigitalItemType) {
+            typeOfItem = "EC Purchase"
+            rewardType.selectedIndex = 5;
+            itemType.selectedIndex = 2;
+        }
+        else if (isECIncommPointsDigitalItemType) {
+            typeOfItem = "EC Points"
+            rewardType.selectedIndex = 3;
+            itemType.selectedIndex = 1;
+        }
+        else if (isPOIncommPointsDigitalItemType) {
             typeOfItem = "PO"
             rewardType.selectedIndex = 3;
-            //goodsType.selectedIndex = 6;
-        }
-        else if (isEGreeting) {
-            typeOfItem = "Greeting Card";
-            externalIdEnd = "egreetingcard";
-            rewardType.selectedIndex = 2;
-        }
-        else if (isGCFP) {
-            typeOfItem = "Gift Card For Purchase"
-            externalIdEnd = "gc";
-            rewardType.selectedIndex = 8;
-        }
-        else if (isContribution) {
-            typeOfItem = "Contribution"
-            rewardType.selectedIndex = 9;
+            itemType.selectedIndex = 1;
         }
         else {
+            typeOfItem = "Needs to be determined"
             rewardType.selectedIndex = 0;
+            itemType.selectedIndex = 0;
         }
 
 
@@ -291,7 +482,7 @@ function changeStuff() {
             AEMTitle.value = ShortName + "*";
         }
 
-        else if (isSweeps) {
+        else if (isPhysicalSweeps || isDigitalSweeps || isDigitalSweeps2) {
             AEMTileTitle.value = NameValue.trim() + "*";
             AEMTitle.value = NameValue.trim() + "*";
         }
@@ -371,6 +562,8 @@ function changeStuff() {
             var externalIdNew = document.getElementById('customfield_19601');
             updatedDirectURL.value = "https://www.aarp.org/rewards/redeem/" + SKU.value + externalIdNew.value;
             updatedDetailLink.value = "https://aarp-rewards.promo.eprize.com/api/v3/goods/" + externalIdNew.value + "/detail/";
+            var UpdatePrizePoolName = document.getElementById('customfield_16800');
+            UpdatePrizePoolName.value = externalIdNew.value;
         }
 
 
@@ -388,10 +581,10 @@ function changeStuff() {
         }
 
         //Direct URL creator
-        if (isSweeps) {
+        if (isPhysicalSweeps || isDigitalSweeps || isDigitalSweeps2) {
             DirectURL.value = 'https://www.aarp.org/rewards/redeem/sweeps/' + NewURL + '/';
         }
-        else if (isEC) {
+        else if (isECIncommPointsDigitalItemType || isECIncommPurchaseDigitalItemType || isECHistoric) {
             DirectURL.value = 'https://www.aarp.org/rewards/redeem/' + NewURL + 'ec/';
         }
         else {
@@ -401,9 +594,14 @@ function changeStuff() {
 
         arv.value = ItemValueValue;
 
-        if (isIW || isSweeps) {
+        if (isIW || isPhysicalSweeps || isDigitalSweeps || isDigitalSweeps2) {
             let fulfillmentVendor = document.getElementById('customfield_19614');
 
+            fulfillmentVendor.value = "TBD";
+
+            alert('1')
+
+            /*
             if (fulfillmentVendor.length > 3) {
                 fulfillmentVendor.value = "";
                 fulfillmentVendor.value = "TBD";
@@ -413,18 +611,28 @@ function changeStuff() {
                 var UUIDTBD = 1;
             }
 
-
             var UUIDTrim = fulfillmentVendor.value.trim();
 
             fulfillmentVendor.value = UUIDTrim;
             NameValue = NameTrim;
             SKU.value = SKUTrim;
+            */
         }
-        else {
+        else if(externalID1){
+
+            let fulfillmentVendor = document.getElementById('customfield_19614');
             var externalIdLP = externalId.value
             .replace(/[-]/g, '');
             //alert(externalIdLP);
             fulfillmentVendor.value = externalIdLP;
+
+            alert('2')
+            }
+        else {
+            let fulfillmentVendor = document.getElementById('customfield_19614');
+            fulfillmentVendor.value = "";
+
+            alert('3')
         }
 
         //brandName.value = brandNameValue;
@@ -432,12 +640,13 @@ function changeStuff() {
         var constrainDate = document.getElementById('customfield_18600');
         constrainDate.value = "";
 
-        if (isSweeps) {
+        if (isPhysicalSweeps || isDigitalSweeps || isDigitalSweeps2) {
             constrainDate.value = ("5/" + fromDateMonth + "/" + fromDateYear);
         }
 
-        if (isIW || isSweeps) {
-            PrizePoolName.value = (SKUValue + " " + prizePoolItemName + " " + fromDateMonth + " 20" + fromDateYear);
+        if (isIW || isPhysicalSweeps || isDigitalSweeps || isDigitalSweeps2) {
+            PrizePoolName.value = (externalId.value);
+            //PrizePoolName.value = (SKUValue + " " + prizePoolItemName + " " + fromDateMonth + " 20" + fromDateYear);
         }
         else {
             PrizePoolName.value = '';
@@ -467,8 +676,11 @@ function changeStuff() {
             if (RewardsDeploy.value == "aarp/24q4instantwin") {
                 projectNumber.value = '260456';
             }
+            else if (RewardsDeploy.value == "aarp/25q1instantwin") {
+                projectNumber.value = '261090';
+            }
         }
-        else if (isSweeps) {
+        else if (isPhysicalSweeps || isDigitalSweeps || isDigitalSweeps2) {
             if ((Q == "q1" || Q == "q2")) {
                 sQ = 'q1q2';
             }
@@ -480,6 +692,9 @@ function changeStuff() {
         if (RewardsDeploy.value == "aarp/24q3q4sweepstakes") {
             projectNumber.value = '259974';
         }
+        else if (RewardsDeploy.value == "aarp/25q1q2sweepstakes") {
+            projectNumber.value = '261091';
+        }
         else {
             RewardsDeploy.value = "";
         }
@@ -490,9 +705,9 @@ function changeStuff() {
         var RewardsDeployValue = RewardsDeploy.value;
         const OamoeURL = document.getElementById('customfield_16517');
         var oamoeRewardDeploy = (fromDateYear + Q + "instantwin");
-        var theUUID = GameUUID.value.trim();
 
         if (isIW && UUIDTBD) {
+            var theUUID = GameUUID.value.trim();
             OamoeURL.value = 'https://sweeps.aarp.org/' + oamoeRewardDeploy + '/oamoe_entry?game=' + theUUID;
         }
         else {
@@ -515,7 +730,7 @@ function changeStuff() {
             pertinentDay = toDateDay;
             pertinentYear = toDateYear;
         }
-        else if (isSweeps) {
+        else if (isPhysicalSweeps || isDigitalSweeps || isDigitalSweeps2) {
             pertinentMonth = fromDateMonth;
             pertinentDay = fromDateDay;
             pertinentYear = fromDateYear;
@@ -692,7 +907,7 @@ function changeStuff() {
         let retailValue = document.getElementById('customfield_13042');
         let retailValueNum = retailValue.value
 
-        if (isDD) {
+        if (isDDHistoric || isDDIncommPurchaseDigitalRewardType) {
             if (retailValue.length == 1 ) {
                 disclosureCopy.value = '<p>*New offer available to the first 150 AARP Rewards members (50 U.S. (D.C.)) each weekday (Monday through Friday) while supplies last. You may only purchase this gift card one time. You may purchase up to 5 gift cards per month. Fulfilled as a digital gift code. This digital gift card is non-refundable. In some instances delivery may take longer than 24 hours. </p>'
             }
@@ -717,7 +932,7 @@ function changeStuff() {
 
 
 
-        if (isSweeps) {
+        if (isPhysicalSweeps || isDigitalSweeps || isDigitalSweeps2) {
             var sweepsfilterTagsSelected = '';
             sweepsfilterTagsSelected = filterTags.options[filterTags.selectedIndex];
             rewardType.selectedIndex = 9;
@@ -797,16 +1012,23 @@ function changeStuff() {
 
     //*************************END OF TOTAL UPDATE******************************
 
-
+/*
 
     //Primary ID Change Updates the Direct URL
 
     var externalIdCurrent = document.getElementById('customfield_19601');
+    var PrizePoolName = document.getElementById('customfield_16800');
+
     externalIdCurrent.onchange = updateURL;
     function updateURL(e) {
+        alert(externalIdCurrent.value);
         var updatedDirectURL = document.getElementById('customfield_16516');
         updatedDirectURL.value = "https://www.aarp.org/rewards/redeem/" + SKU.value + externalIdCurrent.value;
+        var UpdatePrizePoolName = document.getElementById('customfield_16800');
+        UpdatePrizePoolName.value = externalIdCurrent.value;
     }
+*/
+
 
     //Code Format is URL Setter  BASED ON DIGITAL OR PHYSICAL
 
