@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NEW Jira Auto - Ticket Creator
 // @namespace    https://jiradc.helloworld.com/
-// @version      3.5.16
+// @version      3.5.17
 // @description  Efficiently and accurately creating new Rewards Catalog Item Jira tickets
 // @author       Colby Lostutter for the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -31,6 +31,7 @@
 // v3.5.14 - Any updates made to Primary ID are now updated in Detail Link and Direct Link. (7/25/24)
 // v3.5.15 - Add Opp number for 24q4instantwin
 // v3.5.16 - Updating Image URL Trimmer which was creating errors.
+// v3.5.17 - Add Opp number for 24q4instantwin
 
 // AVAILABLE MODULES
 // WHAT'S RUNNNIG - hightlights which components of Jira Auto that are currently active. Should always be running
@@ -94,6 +95,16 @@ function changeStuff() {
     SKU.onchange = totalUpdate;
     fromDate.onchange = totalUpdate;
     toDate.onchange = totalUpdate;
+
+
+    // UUID Creator
+    function uuidv4() {
+        return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
+        (+c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> +c / 4).toString(16)
+        );
+    }
+
+    console.log(uuidv4());
 
 
     function totalUpdate(e) {
@@ -371,6 +382,7 @@ function changeStuff() {
 
         ImageURL.onchange = imageURLTrim;
         function imageURLTrim(e) {
+            alert('ugh');
             var ImageURLValue = ImageURL.value.replace(/ /, "")
                  .trim();
             ImageURL.value = ImageURLValue;
@@ -465,6 +477,12 @@ function changeStuff() {
             if (RewardsDeploy.value == "aarp/24q4instantwin") {
                 oppNumber.value = '260456';
             }
+            if (RewardsDeploy.value == "aarp/25q1instantwin") {
+                oppNumber.value = '261090';
+            }
+            if (RewardsDeploy.value == "aarp/25q2instantwin") {
+                oppNumber.value = '261418';
+            }
         }
         else if (isSweeps) {
             if ((Q == "q1" || Q == "q2")) {
@@ -482,6 +500,9 @@ function changeStuff() {
             }
             if (RewardsDeploy.value == "aarp/24q3q4sweepstakes") {
                 oppNumber.value = '259974';
+            }
+            if (RewardsDeploy.value == "aarp/25q1q2sweepstakes") {
+                oppNumber.value = '261091';
             }
 
         }
