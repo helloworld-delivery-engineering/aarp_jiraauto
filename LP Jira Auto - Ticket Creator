@@ -700,7 +700,7 @@ function changeStuff() {
         //This sets the OAMOE URL
         const OamoeURL = document.getElementById('customfield_16517');
         if (isIW) {
-            OamoeURL.value = "https://www.tobefilledoutlater.biz";
+            OamoeURL.value = "https://sweeps.aarp.org/25q3instantwin/oamoe_entry?game=TBD";
         }
 
 
