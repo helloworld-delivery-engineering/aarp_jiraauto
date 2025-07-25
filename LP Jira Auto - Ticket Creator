@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         LP Jira Auto - Ticket Creator
 // @namespace    https://jiradc.helloworld.com/
-// @version      1.5
+// @version      1.6
 // @description  Modification of New Jira Auto - Ticket Creator 3.5.16 to adapt to Loyalty Plus
 // @author       Colby Lostutter for the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -14,6 +14,7 @@
 //         Set alert to be check externalID is not over 36. Modifying this field, will also update the prizepool and the fulfillmentVendor ID
 // V 1.4 - Corrected externalID changer - added new Opp Number - Made Oamoe URL default to TEXT
 // V 1.5 - Changes to Ticket BLW-113204
+// v 1.6 - Changes from ticket https://jiradc.helloworld.com/browse/BLW-114656
 
 
 // AVAILABLE MODULES
@@ -73,6 +74,7 @@ function changeStuff() {
     var SKU = document.getElementById('customfield_16000');
     var fromDate = document.getElementById('customfield_11113');
     var toDate = document.getElementById('customfield_11112');
+    var points = document.getElementById('customfield_19606');
 
     SKU.focus();
     SKU.select();
@@ -83,6 +85,7 @@ function changeStuff() {
     Name.onchange = totalUpdate;
     fromDate.onchange = totalUpdate;
     toDate.onchange = totalUpdate;
+    points.onchange = totalUpdate;
 
 
     function totalUpdate(e) {
@@ -200,6 +203,7 @@ function changeStuff() {
         .replace(/Sweepstakes/gi, '')
         //.replace(/egift/gi, 'gift')
         .trim();
+
 
         //NOTES if points dont do total of savings (arv minus cost) and percentage but make savings match arv for points
 
@@ -536,7 +540,7 @@ function changeStuff() {
         const SweepsFinder = NewURL.substring(0, 1);
         var availability = document.getElementById('customfield_19616');
         let ParticipantCost = document.getElementById('customfield_16512');
-        var lowWatermark = document.getElementById('customfield_17206');
+        var lowWatermark = document.getElementById('customfield_19607');
         var supplier = document.getElementById('customfield_17301');
         var fulfillment = document.getElementById('customfield_17002-1');
         var codeFormatURL = document.getElementById('customfield_17007');
@@ -549,6 +553,7 @@ function changeStuff() {
         .replace(/[0-9]/g, '')
         .replace(/[’]|[.]|[“]|[”]|[$]|[®]|[™]/gi, '')
         .replace(/[é]/gi, 'e');
+
 
 
         NameValue = NameTrim;
@@ -572,12 +577,20 @@ function changeStuff() {
         externalIdCurrent.onchange = updateURL;
         function updateURL(e) {
             var updatedDirectURL = document.getElementById('customfield_16516');
-            var updatedDetailLink = document.getElementById('customfield_18400');
+            var updatedPrizePoolName = document.getElementById('customfield_16800');
             var externalIdNew = document.getElementById('customfield_19601');
-            updatedDirectURL.value = "https://www.aarp.org/rewards/redeem/" + SKU.value + externalIdNew.value;
-            updatedDetailLink.value = "https://aarp-rewards.promo.eprize.com/api/v3/goods/" + externalIdNew.value + "/detail/";
-            var UpdatePrizePoolName = document.getElementById('customfield_16800');
-            UpdatePrizePoolName.value = externalIdNew.value;
+            updatedDirectURL.value = "https://www.aarp.org/rewards/redeem/" + externalIdNew.value;
+            updatedPrizePoolName.value = externalIdNew.value;
+        }
+
+        fromDate.onchange = holdExternalId;
+        toDate.onchage = holdExternalId;
+        function holdExternalId(e) {
+            var externalIdCurrent = document.getElementById('customfield_19601');
+            const externalIdCurrentValue = externalIdCurrent.value;
+            if (externalIdCurrentValue.length > 1) {
+                externalIdCurrent.value = externalIdCurrentValue;
+            }
         }
 
 
@@ -610,55 +623,32 @@ function changeStuff() {
 
 
 
-
-        /*
-        if (isIW || isPhysicalSweeps || isDigitalSweeps || isDigitalSweeps2) {
-            let fulfillmentVendor = document.getElementById('customfield_19614');
-
-            alert(externalIdEnd + "yes");
-
-            var fulfillmentVendorValue = fulfillmentVendor.value;
-            fulfillmentVendorValue = "TBD";
-
-            alert(fulfillmentVendorValue);
-
-
-
-            if (fulfillmentVendor.length > 3) {
-                fulfillmentVendor.value = "";
-                fulfillmentVendor.value = "TBD";
-            }
-            else if (fulfillmentVendor.value == "TBD") {
-                //alert(TBDoverride);
-                var UUIDTBD = 1;
-            }
-
-            var UUIDTrim = fulfillmentVendor.value.trim();
-
-            fulfillmentVendor.value = UUIDTrim;
-            NameValue = NameTrim;
-            SKU.value = SKUTrim;
-
-        }
-     */
-
-        fulfillmentVendor.value = '';
+        //******FULFILLMENT VENDOR ID LENGTH CHECKER AND FILLER *****//
 
         var externalIdLP = externalId.value
         .replace(/[-]/g, '');
+        var fulfillmentVendorValue = fulfillmentVendor.value;
 
-        if (externalID1){
-            //alert(externalIdLP);
-            fulfillmentVendor.value = externalIdLP;
+
+
+
+        if ((skuChecker == 13 || skuChecker < 15) || (skuChecker == 53 || skuChecker < 55) || (skuChecker == 93 || skuChecker < 96)) {
+           fulfillmentVendor.value = externalIdLP;
         }
-        else if (fulfillmentVendorId) {
-            fulfillmentVendor.value = 'NEEDS INCOMM ID'}
+
+
+        if (isIW || isPhysicalSweeps || isDigitalSweeps || isDigitalSweeps2) {
+            fulfillmentVendor.value = 'TBD'
+        }
 
         else {
-            fulfillmentVendor.value = "TBD";
+          fulfillmentVendor.value = fulfillmentVendorValue;
         }
-        console.log(externalId.value);
+
+
+        console.log(fulfillmentVendor.value);
         console.log(externalIdLP);
+        console.log(whichRewardType);
 
         //brandName.value = brandNameValue;
 
@@ -697,11 +687,7 @@ function changeStuff() {
 
 
 
-        //This sets the OAMOE URL
-        const OamoeURL = document.getElementById('customfield_16517');
-        if (isIW) {
-            OamoeURL.value = "https://sweeps.aarp.org/25q3instantwin/oamoe_entry?game=TBD";
-        }
+        
 
 
 
@@ -866,18 +852,20 @@ function changeStuff() {
 
         /*
 */
+        var pointsValue = pointsValue = points.value;
         var inventory = document.getElementById('customfield_16101');
         var inventoryValue = inventory.value;
         var summaryValue = summaryMonthNumber + "/" + fromDateDay + " | " + typeOfItem + " | " + nameForSummary + ", " + SKUValue;
 
         //NEEDS TO ACCOMODATE FOR SUPER PLAY
 
-        if ((isIW && inventoryValue >= 126)) {
+        if ((isIW && pointsValue == 500)) {
             summary.value = summaryValue + " *SUPER PLAY*";
         }
         else {
             summary.value = summaryValue;
         }
+
 
         /*
         inventory.addEventListener("change", IWsummaryUpdate);
@@ -910,15 +898,6 @@ function changeStuff() {
 
 
 
-
-
-
-
-
-
-
-
-
         console.log(typeOfItem, SKUValue); //CONSOLE LOG
 
 
@@ -927,7 +906,7 @@ function changeStuff() {
 
         if (isDDHistoric || isDDIncommPurchaseDigitalRewardType) {
             if (retailValue.length == 1 ) {
-                disclosureCopy.value = '<p>*New offer available to the first 150 AARP Rewards members (50 U.S. (D.C.)) each weekday (Monday through Friday) while supplies last. You may only purchase this gift card one time. You may purchase up to 5 gift cards per month. Fulfilled as a digital gift code. This digital gift card is non-refundable. In some instances delivery may take longer than 24 hours. </p>'
+                disclosureCopy.value = '<p>*Limited quantities of Daily Deal available to AARP Rewards members (50 U.S. (D.C.)) each weekday (Monday through Friday), while supplies last or no later than 2pm ET. Limit: one (1) purchase of this Daily Deal gift card. You may purchase up to 5 non-premium gift cards each month. Fulfilled as a digital gift code. This digital gift card is non-refundable. In some instances delivery may take longer than 24 hours.</p>'
             }
             else {
                 disclosureCopy.value = '<p>*New offer available to the first 150 AARP Rewards members (50 U.S. (D.C.)) each weekday (Monday through Friday) while supplies last. You may only purchase this gift card one time. You may purchase up to 5 gift cards per month. Fulfilled as a digital gift code. This digital gift card is non-refundable. In some instances delivery may take longer than 24 hours. </p>';
@@ -959,7 +938,7 @@ function changeStuff() {
             //supplier.selectedIndex = 1;
             //ParticipantCost.value = "";
             //rewardsType.selectedIndex = 4;
-            //lowWatermark.value = "0";
+            lowWatermark.value = "0";
             /////fulfillment.checked = true;
             //codeFormatURL.selectedIndex = 1;
             document.getElementById('customfield_16401').setAttribute("multiple", "multiple");
@@ -977,28 +956,33 @@ function changeStuff() {
             filterTags.options[8].selected = false;
             filterTags.options[9].selected = false;
             filterTags.options[10].selected = false;
+            filterTags.options[11].selected = true;
             filterTags.options[12].selected = false;
             filterTags.options[13].selected = false;
             filterTags.options[14].selected = false;
             filterTags.options[15].selected = false;
+            filterTags.options[16].selected = false;
             filterTags.options[17].selected = false;
+            filterTags.options[18].selected = false;
+            filterTags.options[19].selected = true;
+            filterTags.options[20].selected = false;
 
             filterTags.options[16].setAttribute("selected", "selected");
-            filterTags.options[11].setAttribute("selected", "selected");
+            filterTags.options[19].setAttribute("selected", "selected");
             disclosureCopy.value = '<p>*No Points Necessary. See <a title="Hyperlink to the Official Rules" href="https://www.aarp.org/about-aarp/rewards-terms-and-conditions/sweeps-rules/" target="_blank">*Official Rules</a> for alternate method of entry, odds and all details. Void where prohibited. Must enter by ' + readableDate + ' at 11:59 p.m. ET. Limit 10 entries per day per person. Open only to AARP Rewards participants who reside in the 50 U.S. (D.C.). Void in PR, Guam and the USVI. </p>';
         }
         if (isIW) {
             var iwfilterTagsSelected = '';
 
-            iwfilterTagsSelected = filterTags.options[filterTags.selectedIndex].text;
+            iwfilterTagsSelected = filterTags.options[filterTags.selectedIndex];
             rewardType.selectedIndex = 8;
             DisplayedSavings.value = "0";
             //rewardClient.selectedIndex = 1;
             //ParticipantCost.value = "50";
             //goodsType.selectedIndex = 3;
             //supplier.selectedIndex = 1;
-            availability.selectedIndex = 2;
-            //lowWatermark.value = "0";
+            availability.selectedIndex = 4;
+            lowWatermark.value = "0";
             //fulfillment.checked = true;
             //codeFormatURL.selectedIndex = 1;
             //digitalCodeSiteURL.value = "";
@@ -1010,20 +994,26 @@ function changeStuff() {
             filterTags.options[2].selected = false;
             filterTags.options[3].selected = false;
             filterTags.options[4].selected = false;
-            filterTags.options[6].selected = false;
+            filterTags.options[6].selected = true;
             filterTags.options[7].selected = false;
             filterTags.options[8].selected = false;
             filterTags.options[9].selected = false;
+            filterTags.options[10].selected = false;
+            filterTags.options[11].selected = true;
             filterTags.options[12].selected = false;
             filterTags.options[13].selected = false;
-            filterTags.options[14].selected = false;
+            filterTags.options[14].selected = true;
             filterTags.options[15].selected = false;
+            filterTags.options[16].selected = false;
             filterTags.options[17].selected = false;
+            filterTags.options[18].selected = false;
+            filterTags.options[19].selected = true;
+            filterTags.options[20].selected = false;
 
-            filterTags.options[10].setAttribute("selected", "selected");
-            filterTags.options[5].setAttribute("selected", "selected");
-            filterTags.options[16].setAttribute("selected", "selected");
+            filterTags.options[6].setAttribute("selected", "selected");
             filterTags.options[11].setAttribute("selected", "selected");
+            filterTags.options[14].setAttribute("selected", "selected");
+            filterTags.options[19].setAttribute("selected", "selected");
             disclosureCopy.value = '<p>*No Points Necessary. See <a title="Hyperlink to the Official Rules" href="https://www.aarp.org/about-aarp/rewards-terms-and-conditions/instant-win-rules/" target="_blank">Official Rules</a> for alternate method of entry, odds and all details. Must enter by ' + readableDate + ' at 11:59 p.m. ET. Void where prohibited. Limit 1 play each &ldquo;Day&rdquo; (defined as 12:00 a.m. ET through 11:59 p.m. ET) per person. Open only to AARP Rewards participants who reside in the 50 U.S. (D.C.). Void in PR, Guam and the USVI.</p>';
         }
 
@@ -1036,6 +1026,7 @@ function changeStuff() {
             var itemTypeValue = itemType.value;
             var inventory = document.getElementById('customfield_16101');
             var lowWatermark = document.getElementById('customfield_19607');
+            var superPlayPointValue = document.getElementById('customfield_19606');
 
             console.log(itemTypeValue);
             console.log(inventory.value);
@@ -1043,21 +1034,17 @@ function changeStuff() {
 
             if (itemType = '21728' || '21729' || '21742' || '21741' || '22201' || '21733' || '21734' || '21735' || '21738') {
                 lowWatermark.value = (inventory.value / 10);
-                alert(itemTypeValue);
             }
 
             else if (itemType = '22502' || '22500') {
                 lowWatermark.value = '0';
-                alert(itemTypeValue);
             }
             else {
                 lowWatermark.value = (inventory.value / 5);
-                alert(itemTypeValue);
             }
-
+            /*
             var summary = document.getElementById('summary');
             var summaryValue = summaryMonthNumber + "/" + fromDateDay + " | " + typeOfItem + " | " + nameForSummary + ", " + SKUValue;
-
 
             if ((isIW && inventoryValue >= 126)) {
                 summary.value = summaryValue + " *SUPER PLAY*";
@@ -1065,13 +1052,41 @@ function changeStuff() {
             else {
                 summary.value = summaryValue;
             }
-
+*/
 
         }
+        /*
+        pointsValue.addEventListener("change", superPlaySummary);
+        function superPlaySummary() {
+
+            var summary = document.getElementById('summary');
+            var summaryValue = summaryMonthNumber + "/" + fromDateDay + " | " + typeOfItem + " | " + nameForSummary + ", " + SKUValue;
+
+
+            if ((isIW && pointsValue == "500")) {
+                summary.value = summaryValue + " *SUPER PLAY*";
+                console.log(pointsValue);
+            }
+            else {
+                summary.value = summaryValue;
+            }
+
+        }
+        */
 
 
         let RewardsDeploy = document.getElementById('customfield_17001');
         let RewardsDeployValue = RewardsDeploy.value;
+
+        //This sets the OAMOE URL
+
+            let deployPath = document.getElementById('customfield_17001');
+            let deployPathValue = deployPath.value
+            .replace("aarp/", '');
+        const OamoeURL = document.getElementById('customfield_16517');
+        if (isIW) {
+            OamoeURL.value = "https://sweeps.aarp.org/" + deployPathValue + "/oamoe_entry?game=TBD";
+        }
 
         if (isIW) {
 
@@ -1162,6 +1177,8 @@ function changeStuff() {
     */
     let participantCost = document.getElementById('customfield_19606');
     let participantCostValue = participantCost.value;
+
+
 
 
     //CHECK THIS:
@@ -1265,7 +1282,7 @@ function changeStuff() {
 
 
 
-
+/*
 
     var SKUValue = SKU.value;
     let skuChecker = SKUValue.substring(0, 2);
@@ -1273,6 +1290,7 @@ function changeStuff() {
 
     if (skuChecker == 10 || skuChecker < 11 || skuChecker == 15 || skuChecker < 17 || skuChecker == 56 || skuChecker < 58) {
         var fulfillmentVendorCharLimit = 1;
+        alert('2');
     }
 
 
@@ -1295,9 +1313,8 @@ function changeStuff() {
             externalId.style.backgroundColor = "#ffffff";
         }
     }
-
+*/
 
 
 
 }
-
