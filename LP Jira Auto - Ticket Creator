@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         LP Jira Auto - Ticket Creator
 // @namespace    https://jiradc.helloworld.com/
-// @version      1.6
+// @version      1.7
 // @description  Modification of New Jira Auto - Ticket Creator 3.5.16 to adapt to Loyalty Plus
 // @author       Colby Lostutter for the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -15,6 +15,7 @@
 // V 1.4 - Corrected externalID changer - added new Opp Number - Made Oamoe URL default to TEXT
 // V 1.5 - Changes to Ticket BLW-113204
 // v 1.6 - Changes from ticket https://jiradc.helloworld.com/browse/BLW-114656
+// v 1.7 - Update DD Disclaimer text BLW-114656
 
 
 // AVAILABLE MODULES
@@ -905,12 +906,16 @@ function changeStuff() {
         let retailValueNum = retailValue.value
 
         if (isDDHistoric || isDDIncommPurchaseDigitalRewardType) {
+            disclosureCopy.value = '<p>*Limited quantities of Daily Deal available to AARP Rewards members (50 U.S. (D.C.)) each weekday (Monday through Friday), while supplies last or no later than 2pm ET. Limit: one (1) purchase of this Daily Deal gift card. You may purchase up to 5 non-premium gift cards each month. Fulfilled as a digital gift code. This digital gift card is non-refundable. In some instances delivery may take longer than 24 hours.</p>'
+
+            /* // This was removed with Ticket and response to ticket BLW-114656
             if (retailValue.length == 1 ) {
                 disclosureCopy.value = '<p>*Limited quantities of Daily Deal available to AARP Rewards members (50 U.S. (D.C.)) each weekday (Monday through Friday), while supplies last or no later than 2pm ET. Limit: one (1) purchase of this Daily Deal gift card. You may purchase up to 5 non-premium gift cards each month. Fulfilled as a digital gift code. This digital gift card is non-refundable. In some instances delivery may take longer than 24 hours.</p>'
             }
             else {
                 disclosureCopy.value = '<p>*New offer available to the first 150 AARP Rewards members (50 U.S. (D.C.)) each weekday (Monday through Friday) while supplies last. You may only purchase this gift card one time. You may purchase up to 5 gift cards per month. Fulfilled as a digital gift code. This digital gift card is non-refundable. In some instances delivery may take longer than 24 hours. </p>';
             }
+            */
         }
 
         // IW - SWEEPS ABSOLUTES
@@ -1321,3 +1326,4 @@ function changeStuff() {
 
 
 }
+
