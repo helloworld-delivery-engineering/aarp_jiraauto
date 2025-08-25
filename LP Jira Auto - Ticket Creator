@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         LP Jira Auto - Ticket Creator
 // @namespace    https://jiradc.helloworld.com/
-// @version      1.7
+// @version      1.8
 // @description  Modification of New Jira Auto - Ticket Creator 3.5.16 to adapt to Loyalty Plus
 // @author       Colby Lostutter for the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -16,6 +16,7 @@
 // V 1.5 - Changes to Ticket BLW-113204
 // v 1.6 - Changes from ticket https://jiradc.helloworld.com/browse/BLW-114656
 // v 1.7 - Update DD Disclaimer text BLW-114656
+// v 1.8 - Update Filter tag selection for Sweeps
 
 
 // AVAILABLE MODULES
@@ -961,10 +962,10 @@ function changeStuff() {
             filterTags.options[8].selected = false;
             filterTags.options[9].selected = false;
             filterTags.options[10].selected = false;
-            filterTags.options[11].selected = true;
+            filterTags.options[11].selected = false;
             filterTags.options[12].selected = false;
             filterTags.options[13].selected = false;
-            filterTags.options[14].selected = false;
+            filterTags.options[14].selected = true;
             filterTags.options[15].selected = false;
             filterTags.options[16].selected = false;
             filterTags.options[17].selected = false;
@@ -972,7 +973,7 @@ function changeStuff() {
             filterTags.options[19].selected = true;
             filterTags.options[20].selected = false;
 
-            filterTags.options[16].setAttribute("selected", "selected");
+            filterTags.options[14].setAttribute("selected", "selected");
             filterTags.options[19].setAttribute("selected", "selected");
             disclosureCopy.value = '<p>*No Points Necessary. See <a title="Hyperlink to the Official Rules" href="https://www.aarp.org/about-aarp/rewards-terms-and-conditions/sweeps-rules/" target="_blank">*Official Rules</a> for alternate method of entry, odds and all details. Void where prohibited. Must enter by ' + readableDate + ' at 11:59 p.m. ET. Limit 10 entries per day per person. Open only to AARP Rewards participants who reside in the 50 U.S. (D.C.). Void in PR, Guam and the USVI. </p>';
         }
