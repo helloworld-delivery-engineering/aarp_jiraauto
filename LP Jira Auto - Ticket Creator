@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         LP Jira Auto - Ticket Creator
 // @namespace    https://jiradc.helloworld.com/
-// @version      1.8
+// @version      1.9
 // @description  Modification of New Jira Auto - Ticket Creator 3.5.16 to adapt to Loyalty Plus
 // @author       Colby Lostutter for the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -17,6 +17,7 @@
 // v 1.6 - Changes from ticket https://jiradc.helloworld.com/browse/BLW-114656
 // v 1.7 - Update DD Disclaimer text BLW-114656
 // v 1.8 - Update Filter tag selection for Sweeps
+// v 1.9 - Update Project Numbers for 2026 both IW and Sweeps
 
 
 // AVAILABLE MODULES
@@ -1118,23 +1119,23 @@ function changeStuff() {
         }
 
 
-        if (RewardsDeploy.value == "aarp/24q3q4sweepstakes") {
-            projectNumber.value = '259974';
+        if (RewardsDeploy.value == "aarp/26q1q2sweepstakes") {
+            projectNumber.value = '262432';
         }
-        else if (RewardsDeploy.value == "aarp/25q1q2sweepstakes") {
-            projectNumber.value = '261091';
+        else if (RewardsDeploy.value == "aarp/26q3q4sweepstakes") {
+            projectNumber.value = '262433';
         }
-        else if (RewardsDeploy.value == "aarp/25q3q4sweepstakes") {
-            projectNumber.value = '261780';
+        else if (RewardsDeploy.value == "aarp/26q1instantwin") {
+            projectNumber.value = '262434';
         }
-        else if (RewardsDeploy.value == "aarp/25q1instantwin") {
-            projectNumber.value = '261090';
+        else if (RewardsDeploy.value == "aarp/26q2instantwin") {
+            projectNumber.value = '262435';
         }
-        else if (RewardsDeploy.value == "aarp/25q3instantwin") {
-            projectNumber.value = '261779';
+        else if (RewardsDeploy.value == "aarp/26q3instantwin") {
+            projectNumber.value = '262436';
         }
-        else if (RewardsDeploy.value == "aarp/25q4instantwin") {
-            projectNumber.value = '262110';
+        else if (RewardsDeploy.value == "aarp/26q4instantwin") {
+            projectNumber.value = '262437';
         }
 
 
