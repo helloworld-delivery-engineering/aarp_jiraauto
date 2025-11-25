@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         LP Jira Auto - Ticket Creator
 // @namespace    https://jiradc.helloworld.com/
-// @version      1.9
-// @description  Modification of New Jira Auto - Ticket Creator 3.5.16 to adapt to Loyalty Plus
+// @version      2.0
+// @description  Modification of LP Jira Auto 1.9 - Revamp flow and allow for year round deploy path set up.
 // @author       Colby Lostutter for the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
 // @grant        none
@@ -18,6 +18,8 @@
 // v 1.7 - Update DD Disclaimer text BLW-114656
 // v 1.8 - Update Filter tag selection for Sweeps
 // v 1.9 - Update Project Numbers for 2026 both IW and Sweeps
+
+// v 2.0 - Updated flow for ease of filling out form. Updated year variable for oamoe - item type - reward type removed a lot of unnecessary code
 
 
 // AVAILABLE MODULES
@@ -40,11 +42,12 @@ window.addEventListener('load', function() {
     let script_active_notification_div = document.createElement("div");
     let notification_containing_div = document.getElementById("notification_container_div");
     script_active_notification_div.id = "jira_auto_active_notification_div";
-    script_active_notification_div.innerHTML = "LP Jira Auto - Ticket Creator";
-    script_active_notification_div.style.backgroundColor = "#99bbff";
+    script_active_notification_div.innerHTML = "2.0 LP Jira Auto - Ticket Creator";
+    script_active_notification_div.style.backgroundColor = "#1154aa";
     script_active_notification_div.style.padding = "5px";
     script_active_notification_div.style.fontSize = "10px";
     script_active_notification_div.style.fontWeight = "bold";
+    script_active_notification_div.style.color = "#ffffff";
     script_active_notification_div.style.display = "block";
     script_active_notification_div.style.width = "100%";
     notification_containing_div.append(script_active_notification_div);
@@ -71,7 +74,7 @@ function hooooold() {
 function changeStuff() {
 
     console.log('totalUpdate about to happen');
-    alert("LP Jira Auto - Ticket Creator is running");
+    alert("LP Jira Auto 2.0 - Ticket Creator is running");
 
     var Name = document.getElementById('customfield_16503');
     var SKU = document.getElementById('customfield_16000');
@@ -79,8 +82,8 @@ function changeStuff() {
     var toDate = document.getElementById('customfield_11112');
     var points = document.getElementById('customfield_19606');
 
-    SKU.focus();
-    SKU.select();
+    //SKU.focus();
+    //SKU.select();
     //Name.value = "";
 
 
@@ -121,7 +124,7 @@ function changeStuff() {
         var tag = document.getElementById('customfield_19609');
         var tagValue = tag.options[tag.selectedIndex].value;
         //FROM DATE
-        const fromDate = document.getElementById('customfield_11113');
+        var fromDate = document.getElementById('customfield_11113');
         let fromDateValue = fromDate.value;
         const fromDateDay = fromDateValue.match(/\d{2}(?=\/)|\d{1}(?=\/)/g);
         const fromDateMonth = fromDate.value.replace(/(\s|[^a-zA-Z])/g, "");
@@ -349,15 +352,17 @@ function changeStuff() {
 
 
 
-        console.log(whichRewardType);
 
-        const rewardType = document.getElementById('customfield_19701');
+
+        var rewardType = document.getElementById('customfield_19701');
         var rewardTypeValue = rewardType.options[rewardType.selectedIndex].value;
         var rewardTypeSelected = rewardType.options[rewardType.selectedIndex].text;
 
-        const itemType = document.getElementById('customfield_19705');
+        var itemType = document.getElementById('customfield_19705');
         var itemTypeValue = itemType.options[itemType.selectedIndex].value;
         var itemTypeSelected = itemType.options[itemType.selectedIndex].text;
+
+        console.log(whichRewardType);
 
 
         //TYPE OF ITEM
@@ -367,26 +372,26 @@ function changeStuff() {
         if (isIW) {
             typeOfItem = "IW";
             rewardType.selectedIndex = 8;
-            itemType.selectedIndex = 16;
+            //itemType.selectedIndex = 16;
             externalIdEnd = "iw";
         }
         else if (isPhysicalSweeps) {
             typeOfItem = "Sweeps - Physical";
             externalIdEnd = "sweeps";
             rewardType.selectedIndex = 9;
-            itemType.selectedIndex = 19;
+            //itemType.selectedIndex = 19;
         }
         else if (isDigitalSweeps) {
             typeOfItem = "Sweeps";
             externalIdEnd = "sweeps";
             rewardType.selectedIndex = 9;
-            itemType.selectedIndex = 20;
+            //itemType.selectedIndex = 20;
         }
         else if (isDigitalSweeps2) {
             typeOfItem = "Sweeps";
             externalIdEnd = "sweeps";
             rewardType.selectedIndex = 9;
-            itemType.selectedIndex = 20;
+            //itemType.selectedIndex = 20;
         }
         else if (isPOPointsPreloadedURLDigitalItemType) {
             typeOfItem = "PO"
@@ -505,14 +510,7 @@ function changeStuff() {
 
 
 
-        // START AND END DATES CLEAR //
-        /*
-        var startDate = document.getElementById('customfield_11113');
-        var endDate = document.getElementById('customfield_11112');
 
-        startDate.value = "";
-        endDate.value = "";
-        */
 
         // AEM TITLES
         if (isIW) {
@@ -625,14 +623,11 @@ function changeStuff() {
         arv.value = ItemValueValue;
 
 
-
         //******FULFILLMENT VENDOR ID LENGTH CHECKER AND FILLER *****//
 
         var externalIdLP = externalId.value
         .replace(/[-]/g, '');
         var fulfillmentVendorValue = fulfillmentVendor.value;
-
-
 
 
         if ((skuChecker == 13 || skuChecker < 15) || (skuChecker == 53 || skuChecker < 55) || (skuChecker == 93 || skuChecker < 96)) {
@@ -686,12 +681,6 @@ function changeStuff() {
         else if (SN == "Oct" || SN == "Nov" || SN == "Dec") {
             Q = "q4";
         }
-
-
-
-
-        
-
 
 
 
@@ -870,27 +859,7 @@ function changeStuff() {
         }
 
 
-        /*
-        inventory.addEventListener("change", IWsummaryUpdate);
-        function IWsummaryUpdate() {
-            var inventory = document.getElementById('customfield_16101');
-            var inventoryValue = inventory.value;
-            var summary = document.getElementById('summary');
-            var summaryValue = summaryMonthNumber + "/" + fromDateDay + " | " + typeOfItem + " | " + nameForSummary + ", " + SKUValue;
 
-
-            if ((isIW && inventoryValue >= 126)) {
-                summary.value = summaryValue + " *SUPER PLAY*";
-            }
-            else {
-                summary.value = summaryValue;
-            }
-
-
-
-            alert('iwsummary');
-        }
-*/
 
         //Auto LOW WATERMARK
 
@@ -1049,65 +1018,36 @@ function changeStuff() {
             else {
                 lowWatermark.value = (inventory.value / 5);
             }
-            /*
-            var summary = document.getElementById('summary');
-            var summaryValue = summaryMonthNumber + "/" + fromDateDay + " | " + typeOfItem + " | " + nameForSummary + ", " + SKUValue;
 
-            if ((isIW && inventoryValue >= 126)) {
-                summary.value = summaryValue + " *SUPER PLAY*";
-            }
-            else {
-                summary.value = summaryValue;
-            }
-*/
 
         }
-        /*
-        pointsValue.addEventListener("change", superPlaySummary);
-        function superPlaySummary() {
 
-            var summary = document.getElementById('summary');
-            var summaryValue = summaryMonthNumber + "/" + fromDateDay + " | " + typeOfItem + " | " + nameForSummary + ", " + SKUValue;
-
-
-            if ((isIW && pointsValue == "500")) {
-                summary.value = summaryValue + " *SUPER PLAY*";
-                console.log(pointsValue);
-            }
-            else {
-                summary.value = summaryValue;
-            }
-
-        }
-        */
 
 
         let RewardsDeploy = document.getElementById('customfield_17001');
         let RewardsDeployValue = RewardsDeploy.value;
+        var OamoeURL = document.getElementById('customfield_16517');
 
         //This sets the OAMOE URL
 
-            let deployPath = document.getElementById('customfield_17001');
-            let deployPathValue = deployPath.value
+        let deployPath = document.getElementById('customfield_17001');
+        let deployPathValue = deployPath.value
             .replace("aarp/", '');
-        const OamoeURL = document.getElementById('customfield_16517');
-        if (isIW) {
+
+        /*if (isIW) {
             OamoeURL.value = "https://sweeps.aarp.org/" + deployPathValue + "/oamoe_entry?game=TBD";
+            console.log(OamoeURL);
         }
+        */
 
         if (isIW) {
-
-
-            //projectNumber.value = '261779';
-            //RewardsDeploy.value = "aarp/25q3instantwin";
-
             RewardsDeploy.value = ("aarp/" + fromDateYear + Q + "instantwin");
-
-
+            console.log(RewardsDeployValue);
+            //OamoeURL.value = "https://sweeps.aarp.org/" + deployPathValue + "/oamoe_entry?game=TBD";
+            //console.log(OamoeURL);
         }
-        else if (isPhysicalSweeps || isDigitalSweeps || isDigitalSweeps2) {
 
-            //projectNumber.value = '261780';
+        else if (isPhysicalSweeps || isDigitalSweeps || isDigitalSweeps2) {
 
             if ((Q == "q1" || Q == "q2")) {
                 sQ = 'q1q2';
@@ -1119,27 +1059,65 @@ function changeStuff() {
         }
 
 
-        if (RewardsDeploy.value == "aarp/26q1q2sweepstakes") {
+        if (RewardsDeploy.value == "aarp/" + fromDateYear + "q1q2sweepstakes") {
             projectNumber.value = '262432';
+            if (isDigitalSweeps) {
+                itemType.selectedIndex = 18;
+            }
+            else if (isPhysicalSweeps) {
+                itemType.selectedIndex = 19;
+            }
+            OamoeURL.value = "";
+
         }
-        else if (RewardsDeploy.value == "aarp/26q3q4sweepstakes") {
+        else if (RewardsDeploy.value == "aarp/" + fromDateYear + "q3q4sweepstakes") {
             projectNumber.value = '262433';
+            if (isDigitalSweeps) {
+                itemType.selectedIndex = 20;
+            }
+            else if (isPhysicalSweeps) {
+                itemType.selectedIndex = 21;
+            }
+            OamoeURL.value = "";
         }
-        else if (RewardsDeploy.value == "aarp/26q1instantwin") {
+        else if (RewardsDeploy.value == "aarp/" + fromDateYear + "q1instantwin") {
             projectNumber.value = '262434';
+            itemType.selectedIndex = 14;
+            OamoeURL.value = "https://sweeps.aarp.org/" + fromDateYear + "q1instantwin/oamoe_entry?game=TBD";
         }
-        else if (RewardsDeploy.value == "aarp/26q2instantwin") {
+        else if (RewardsDeploy.value == "aarp/" + fromDateYear + "q2instantwin") {
             projectNumber.value = '262435';
+            itemType.selectedIndex = 15;
+            OamoeURL.value = "https://sweeps.aarp.org/" + fromDateYear + "q2instantwin/oamoe_entry?game=TBD";
         }
-        else if (RewardsDeploy.value == "aarp/26q3instantwin") {
+        else if (RewardsDeploy.value == "aarp/" + fromDateYear + "q3instantwin") {
             projectNumber.value = '262436';
+            itemType.selectedIndex = 16;
+            OamoeURL.value = "https://sweeps.aarp.org/" + fromDateYear + "q3instantwin/oamoe_entry?game=TBD";
         }
-        else if (RewardsDeploy.value == "aarp/26q4instantwin") {
+        else if (RewardsDeploy.value == "aarp/" + fromDateYear + "q4instantwin") {
             projectNumber.value = '262437';
+            itemType.selectedIndex = 17;
+            OamoeURL.value = "https://sweeps.aarp.org/" + fromDateYear + "q4instantwin/oamoe_entry?game=TBD";
+        }
+
+
+        //Code Format is URL Setter  BASED ON DIGITAL OR PHYSICAL
+
+        var sweepstakesPrizeType = document.getElementById('customfield_17610');
+        if (isPhysicalSweeps) {
+            sweepstakesPrizeType.selectedIndex = 1;
+        }
+        else if (isDigitalSweeps) {
+            sweepstakesPrizeType.selectedIndex = 2;
         }
 
 
         console.log(RewardsDeployValue);
+        console.log(deployPathValue);
+        console.log(itemType.value);
+        console.log(OamoeURL.value);
+        console.log("Sweeps Prize Type " + sweepstakesPrizeType);
 
 
 
@@ -1191,69 +1169,6 @@ function changeStuff() {
 
 
 
-    //CHECK THIS:
-    /*
-    participantCost.addEventListener("change", pointModifier);
-    function pointModifier() {
-        let ParticipantCost = document.getElementById('customfield_16512');
-        let DisplayedSavings = document.getElementById('customfield_16513');
-        let DisplayedDiscount = document.getElementById('customfield_16514');
-        let retailValue = document.getElementById('customfield_13042');
-        //SKU CHECKER
-        let SKUValue = SKU.value;
-        let skuChecker = SKUValue.substring(0, 2);
-        if ((skuChecker >= 40 && skuChecker <= 49)) {
-            var isSweeps = 1;
-        }
-        else if ((skuChecker >= 30 && skuChecker <= 39)) {
-            var isIW = 1;
-        }
-        ParticipantCost.value = '';
-        DisplayedSavings.value = "";
-        DisplayedDiscount.value = "";
-        if (isIW || isSweeps) {
-            DisplayedSavings.value = '0';
-        }
-        else {
-            DisplayedSavings.value = DisplayedSavingsValue;
-        }
-    }
-
-    ParticipantCost.addEventListener("change", costModifier);
-    function costModifier() {
-        let retailValue = document.getElementById('customfield_13042');
-        let ParticipantCost = document.getElementById('customfield_16512');
-        let DisplayedSavings = document.getElementById('customfield_16513');
-        let DisplayedDiscount = document.getElementById('customfield_16514');
-        let participantCost = document.getElementById('customfield_19606');
-        let retailValueNum = retailValue.value
-        .replace(/[$]|[‘]/g, '');
-        //CHECK THIS: let ParticipantCostValue = ParticipantCost.value;
-        //CHECK THIS: let DisplayedSavingsNum = (retailValueNum - ParticipantCostValue);
-        //CHECK THIS: let DisplayedDiscountValue = (DisplayedSavingsNum / retailValueNum);
-        let DiscountPercent = Number(DisplayedDiscountValue).toLocaleString(undefined, {
-            style: 'percent'
-        });
-        let SKUValue = SKU.value;
-        let skuChecker = SKUValue.substring(0, 2);
-        if ((skuChecker >= 40 && skuChecker <= 49)) {
-            var isSweeps = 1;
-        }
-        else if ((skuChecker >= 30 && skuChecker <= 39)) {
-            var isIW = 1;
-        }
-        PointsField.value = "";
-        DisplayedSavings.value = "";
-        if (isIW || isSweeps) {
-            DisplayedSavings.value = "0"
-        }
-        else {
-            DisplayedSavings.value = DisplayedSavingsValue;
-            DisplayedDiscount.value = DiscountPercent;
-        }
-    }
-    */
-
 
 
 
@@ -1262,6 +1177,10 @@ function changeStuff() {
     // Issuance ID Creator
 
     var issuanceId = document.getElementById('customfield_19605');
+    var startDate = document.getElementById('customfield_11113');
+    var endDate = document.getElementById('customfield_11112');
+    let RewardsDeploy = document.getElementById('customfield_17001');
+    var itemType = document.getElementById('customfield_19705');
 
 
 
@@ -1278,7 +1197,15 @@ function changeStuff() {
                                                                               (+c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> +c / 4).toString(16)
                                                                              );
             issuanceId.style.backgroundColor = "#00ee00";
+
+            // Clear fromDate - toDate - RewardsDeploy
+            startDate.value = '';
+            endDate.value = '';
+            RewardsDeploy.value = '';
+            console.log('issuance IF change');
             SKU.focus();
+            SKU.select();
+
         }
 
         else if (issuanceId.value.length > 20) {
@@ -1287,6 +1214,14 @@ function changeStuff() {
     }
 
     console.log(uuidv41());
+
+    SKU.onchange = startDateFocus;
+        function startDateFocus(e) {
+            var startDate = document.getElementById('customfield_11113');
+            startDate.focus();
+            startDate.select();
+        }
+
 
 
 
