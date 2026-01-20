@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         LP Jira Auto - Ticket Creator
 // @namespace    https://jiradc.helloworld.com/
-// @version      2.0
+// @version      2.1
 // @description  Modification of LP Jira Auto 1.9 - Revamp flow and allow for year round deploy path set up.
 // @author       Colby Lostutter for the Blue Workstream
 // @match        https://jiradc.helloworld.com/*
@@ -74,7 +74,7 @@ function hooooold() {
 function changeStuff() {
 
     console.log('totalUpdate about to happen');
-    alert("LP Jira Auto 2.0 - Ticket Creator is running");
+    alert("LP Jira Auto 2.1 - Ticket Creator is running");
 
     var Name = document.getElementById('customfield_16503');
     var SKU = document.getElementById('customfield_16000');
@@ -1167,6 +1167,8 @@ function changeStuff() {
     let participantCostValue = participantCost.value;
 
 
+    //SKU Change Updater
+
 
 
 
@@ -1215,14 +1217,14 @@ function changeStuff() {
 
     console.log(uuidv41());
 
-    SKU.onchange = startDateFocus;
+    /*SKU.onchange = startDateFocus;
         function startDateFocus(e) {
             var startDate = document.getElementById('customfield_11113');
             startDate.focus();
             startDate.select();
         }
 
-
+*/
 
 
 
